@@ -39,9 +39,9 @@ list(APPEND ProgettoPCS2025_LINKED_LIBRARIES PRIVATE GTest::gmock_main)
 
 add_subdirectory(src)
 
-list(APPEND ProgettoPCS2025_sources ${polygonalMesh_sources})
-list(APPEND ProgettoPCS2025_headers ${polygonalMesh_headers})
-list(APPEND ProgettoPCS2025_includes ${polygonalMesh_includes})
+list(APPEND ProgettoPCS2025_sources ${polyhedralMesh_sources})
+list(APPEND ProgettoPCS2025_headers ${polyhedralMesh_headers})
+list(APPEND ProgettoPCS2025_includes ${polyhedralMesh_includes})
 
 add_subdirectory(ExportParaview)
 
@@ -58,7 +58,7 @@ add_executable(${PROJECT_NAME}
 	${${PROJECT_NAME}_headers})
 
 
-#file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/PolygonalMesh/Cell0Ds.csv  ${CMAKE_CURRENT_SOURCE_DIR}/PolygonalMesh/Cell1Ds.csv  ${CMAKE_CURRENT_SOURCE_DIR}/PolygonalMesh/Cell2Ds.csv
+#file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/PolyhedralMesh/Cell0Ds.csv  ${CMAKE_CURRENT_SOURCE_DIR}/PolyhedralMesh/Cell1Ds.csv  ${CMAKE_CURRENT_SOURCE_DIR}/PolyhedralMesh/Cell2Ds.csv
       #DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 
 target_link_libraries(${PROJECT_NAME} ${ProgettoPCS2025_LINKED_LIBRARIES})

@@ -57,9 +57,9 @@ add_executable(${PROJECT_NAME}
 	${${PROJECT_NAME}_sources}
 	${${PROJECT_NAME}_headers})
 
-
 #file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/PolyhedralMesh/Cell0Ds.csv  ${CMAKE_CURRENT_SOURCE_DIR}/PolyhedralMesh/Cell1Ds.csv  ${CMAKE_CURRENT_SOURCE_DIR}/PolyhedralMesh/Cell2Ds.csv
       #DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 
 target_link_libraries(${PROJECT_NAME} ${ProgettoPCS2025_LINKED_LIBRARIES})
 target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE ${${PROJECT_NAME}_includes})
+target_compile_options(${PROJECT_NAME} PUBLIC -fPIC)

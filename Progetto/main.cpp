@@ -1,9 +1,32 @@
-#include <iostream>
+#include "Utils.hpp"
 
 using namespace std;
+using namespace Eigen;
+using namespace PolyhedralLibrary;
 
 int main()
 {
-	cout << "Funziona" << endl;
+	PolyhedralMesh mesh;
+	string path = "/home/appuser/Data/ProgettoPCS2025/Progetto/Platonic_solids";
+	string File_0D_Path = "/home/appuser/Data/Try/MioExport/Cell0DsTRY.inp";
+	string File_1D_Path = "/home/appuser/Data/Try/MioExport/Cell1DsTRY.inp";
+
+	if(!ImportVector(path, mesh))
+	{
+		return 1;
+	}
+/*
+	if(!ExpPoints(mesh, File_0D_Path))
+	{
+		return 1;
+	}
+	
+	if(!ExpSegments(mesh, File_1D_Path))
+	{
+		return 1;
+	}
+
+	cout << "Fatto tutto\n";
+*/	
 	return 0;
 }

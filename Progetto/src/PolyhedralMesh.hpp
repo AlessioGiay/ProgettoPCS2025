@@ -19,9 +19,9 @@ struct PolyhedralMesh
 	unsigned int Cell1DsNum = 0;
 	vector<unsigned int> Cell1DsID {};
 	vector<unsigned int> Cell1DsMarker = {};
-	vector<Vector3i> Cell1DsVertices = {};
+	vector<Vector2i> Cell1DsVertices = {};
 	
-	unsigned int Cell2DsNum = 0;
+	unsigned int NumCell2Ds = 0;
 	vector<unsigned int> Cell2DsID = {};
 	vector<vector<unsigned int>> Cell2DsVertices = {};
 	vector<vector<unsigned int>> Cell2DsEdges = {};

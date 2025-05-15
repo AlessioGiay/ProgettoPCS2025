@@ -10,7 +10,7 @@ namespace PolyhedralLibrary
 {
 bool ImportVector(const string& path, PolyhedralMesh& mesh);
 
-bool PolyhedralChoice(const string& path, PolyhedralMesh& mesh, const char& p, const char& q,  const char& b, const char& c, bool& percorso);
+bool PolyhedralChoice(const string& path, PolyhedralMesh& mesh, const char& p, const char& q,  const char& b, const char& c, bool& BestPath);
 
 bool ImportMesh(const string& path, PolyhedralMesh& mesh);
 

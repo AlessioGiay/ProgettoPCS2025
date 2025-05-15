@@ -14,7 +14,7 @@ namespace PolyhedralLibrary
 {
 bool ImportVector(const string& path, PolyhedralMesh& mesh)
 {
-	vector<string> v;
+	string answ;
 	char p;
 	char q;
 	char b;
@@ -22,42 +22,32 @@ bool ImportVector(const string& path, PolyhedralMesh& mesh)
 	char Id1;
 	char Id2;
 	char sep;
-	bool percorso = false;
+	bool BestPath = false;
 	
-	cout << "Inserire ogni valore e premere invio. Per gli ID se non se non si vuole il percorso inviare 'n'" << endl;
-	cout << "Inserisci p: ";
-	cin >> p;
-	cout << "Inserisci q: ";
-	cin >> q;
-	cout << "Inserisci b: ";
-	cin >> b;
-	cout << "Inserisci c: ";
-	cin >> c;
-	cout << "Inserisci Id1: ";
-	cin >> Id1;
-	cout << "Inserisci Id2: ";
-	cin >> Id2;
+	cout << "Inserire ogni valore nella forma p,q,b,c,Id1,Id2 e premere invio. Per gli Id se non si non si vuole il percorso inviare 'n': " << endl;
+	cin >> answ;
+	
+	stringstream ss(answ);
+	ss >> p >> sep >> q >> sep >> b >> sep >> c >> sep >> Id1 >> sep >> Id2;
 	
 	if(Id1 == 'n' && Id2 == 'n')
 	{
-		cout << "Ok uguali" << endl;
-		PolyhedralChoice(path, mesh, p, q, b, c, percorso);
+		PolyhedralChoice(path, mesh, p, q, b, c, BestPath);
 	}
 	else if(Id1 != 'n' && Id2 != 'n')
 	{
-		cout << "Ok diversi" << endl;
-		percorso = true;
-		PolyhedralChoice(path, mesh, p, q, b, c, percorso);
+		BestPath = true;
+		PolyhedralChoice(path, mesh, p, q, b, c, BestPath);
 	}
 	else
 	{
 		cerr << "I dati inseriti non sono validi" << endl;
+		return false;
 	}
 	return true;
 }
-
 // ***************************************************************************
-bool PolyhedralChoice(const string& path, PolyhedralMesh& mesh, const char& p, const char& q, const char& b, const char& c, bool& percorso)
+bool PolyhedralChoice(const string& path, PolyhedralMesh& mesh, const char& p, const char& q, const char& b, const char& c, bool& BestPath)
 {
 	string addpath;
 	string filepath;
@@ -79,15 +69,27 @@ bool PolyhedralChoice(const string& path, PolyhedralMesh& mesh, const char& p, c
 				return false;
 		}
 		filepath = path + addpath;
-		ImportMesh(filepath, mesh);
-
-		// Geodetico(mesh, b, c, percorso);
-		// if (q == '3') Goldberg(mesh, b, c, percorso);
+		if(!ImportMesh(filepath, mesh))
+		{
+			return false;
+		}
+		/*
+		if(!(Geodetico(mesh, b, c, BestPath))
+		{
+			return false;
+		}
+		if(q == '3')
+		{
+			if(!(Goldberg(mesh, b, c, BestPath))
+			{
+				return false;
+			}
+		}
+		*/
 		return true;
 	}
 	return false;
 }
-
 // ***************************************************************************
 bool ImportMesh(const string& path, PolyhedralMesh& mesh)
 {
@@ -112,7 +114,6 @@ bool ImportMesh(const string& path, PolyhedralMesh& mesh)
     }
     return true;
 }
-
 // ***************************************************************************
 bool ImportCell0Ds(const string& path, PolyhedralMesh& mesh)
 {
@@ -150,18 +151,8 @@ bool ImportCell0Ds(const string& path, PolyhedralMesh& mesh)
 		mesh.Cell0DsID.push_back(Id);
 		mesh.Cell0DsCoordinates.push_back(Coordinates);
 	}
-	for(auto i:mesh.Cell0DsCoordinates)
-	{
-		for(auto j:i)
-		{
-			cout << j << " ";
-		}
-		cout << endl;
-	}
-	cout << "********************************\n";
 	return true;
 }
-
 // ***************************************************************************
 bool ImportCell1Ds(const string& path, PolyhedralMesh& mesh)
 {
@@ -199,18 +190,8 @@ bool ImportCell1Ds(const string& path, PolyhedralMesh& mesh)
 		mesh.Cell1DsID.push_back(Id);
 		mesh.Cell1DsVertices.push_back(Vertices);
 	}
-	for(auto i:mesh.Cell1DsVertices)
-	{
-		for(auto j:i)
-		{
-			cout << j << " ";
-		}
-		cout << endl;
-	}
-	cout << "********************************\n";
     return true;
 }
-
 // ***************************************************************************
 bool ImportCell2Ds(const string& path, PolyhedralMesh& mesh)
 {
@@ -260,23 +241,6 @@ bool ImportCell2Ds(const string& path, PolyhedralMesh& mesh)
 		mesh.Cell2DsVertices.push_back(Vertices);
 		mesh.Cell2DsEdges.push_back(Edges);
 		mesh.Cell2DsID.push_back(Id);
-	}
-
-	for(auto i:mesh.Cell2DsVertices)
-	{
-		for(auto j:i)
-		{
-			cout << j << " ";
-		}
-		cout << endl;
-	}
-	for(auto i:mesh.Cell2DsEdges)
-	{
-		for(auto j:i)
-		{
-			cout << j << " ";
-		}
-		cout << endl;
 	}
 	return true;
 }

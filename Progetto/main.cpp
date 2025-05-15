@@ -7,7 +7,7 @@ using namespace PolyhedralLibrary;
 int main()
 {
 	PolyhedralMesh mesh;
-	string path = "/home/appuser/Data/ProgettoPCS2025/Progetto/Platonic_solids";
+	string path = "/home/appuser/Data/ProgettoPCS2025/Progetto/PlatonicSolids";
 	string File_0D_Path = "/home/appuser/Data/Try/MioExport/Cell0DsTRY.inp";
 	string File_1D_Path = "/home/appuser/Data/Try/MioExport/Cell1DsTRY.inp";
 

@@ -57,8 +57,16 @@ add_executable(${PROJECT_NAME}
 	${${PROJECT_NAME}_sources}
 	${${PROJECT_NAME}_headers})
 
-#file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/PolyhedralMesh/Cell0Ds.csv  ${CMAKE_CURRENT_SOURCE_DIR}/PolyhedralMesh/Cell1Ds.csv  ${CMAKE_CURRENT_SOURCE_DIR}/PolyhedralMesh/Cell2Ds.csv
-      #DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/Platonic_solids/Icosaedro/Cell0Ds.csv  
+	  ${CMAKE_CURRENT_SOURCE_DIR}/Platonic_solids/Icosaedro/Cell1Ds.csv  
+	  ${CMAKE_CURRENT_SOURCE_DIR}/Platonic_solids/Icosaedro/Cell2Ds.csv
+	  ${CMAKE_CURRENT_SOURCE_DIR}/Platonic_solids/Ottaedro/Cell0Ds.csv  
+	  ${CMAKE_CURRENT_SOURCE_DIR}/Platonic_solids/Ottaedro/Cell1Ds.csv  
+	  ${CMAKE_CURRENT_SOURCE_DIR}/Platonic_solids/Ottaedro/Cell2Ds.csv
+  	  ${CMAKE_CURRENT_SOURCE_DIR}/Platonic_solids/Tetraedro/Cell0Ds.csv  
+	  ${CMAKE_CURRENT_SOURCE_DIR}/Platonic_solids/Tetraedro/Cell1Ds.csv  
+	  ${CMAKE_CURRENT_SOURCE_DIR}/Platonic_solids/Tetraedro/Cell2Ds.csv
+      DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 
 target_link_libraries(${PROJECT_NAME} ${ProgettoPCS2025_LINKED_LIBRARIES})
 target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE ${${PROJECT_NAME}_includes})

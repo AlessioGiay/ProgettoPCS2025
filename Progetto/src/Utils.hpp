@@ -1,6 +1,6 @@
 #pragma once
 
-#include "PolyhedrallMesh.hpp"
+#include "PolyhedralMesh.hpp"
 #include "UCDUtilities.hpp"
 #include <limits>
 
@@ -8,13 +8,13 @@ using namespace std;
 
 namespace PolyhedralLibrary
 {
-bool ImportCell(const string& path, PolygonalMesh& mesh);
+bool ImportCell(const string& path, PolyhedralMesh& mesh);
 
-bool CheckLength(PolygonalMesh& mesh);
+bool CheckLength(PolyhedralMesh& mesh);
 
-bool CheckAreas(PolygonalMesh& mesh);
+bool CheckAreas(PolyhedralMesh& mesh);
 
-bool ExpPoints(PolygonalMesh& mesh, const string& FilePath);
+bool ExpPoints(PolyhedralMesh& mesh, const string& FilePath);
 
-bool ExpSegments(PolygonalMesh& mesh, const string& FilePath);
+bool ExpSegments(PolyhedralMesh& mesh, const string& FilePath);
 }

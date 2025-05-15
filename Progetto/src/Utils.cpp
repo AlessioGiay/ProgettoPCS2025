@@ -12,8 +12,8 @@ double EdgeLength(const double& x1, const double& y1, const double& z1, const do
 
 namespace PolyhedralLibrary
 {
-bool ImportCell(const string& path, PolygonalMesh& mesh);
+bool ImportCell(const string& path, PolyhedralMesh& mesh)
 {
-	
+	return 0;
 }
 }

@@ -36,6 +36,3 @@ struct PolyhedralMesh
 };
 
 }
-
-
-// marker == 1 se in percorso, 0 se no. Per vertici e lati

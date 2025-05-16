@@ -21,6 +21,10 @@ bool ImportCell1Ds(const string& path, PolyhedralMesh& mesh);
 bool ImportCell2Ds(const string& path, PolyhedralMesh& mesh);
 
 void Goldberg(PolyhedralMesh& mesh);
+
+bool Output(PolyhedralMesh& mesh, const string& path);
+
+bool OutputCell0Ds(PolyhedralMesh& mesh, const string& path);
 /*
 bool ExpPoints(PolyhedralMesh& mesh, const string& FilePath);
 

@@ -2,6 +2,7 @@
 #include <fstream>
 #include <sstream>
 #include <cmath>
+#include <iomanip>
 
 using namespace std;
 /*
@@ -63,13 +64,13 @@ bool PolyhedralChoice(const string& path, PolyhedralMesh& mesh, const char& p, c
 		switch(q) 
 		{	
 			case '3':
-				addpath = "/Tetraedro";
+				addpath = "/PlatonicSolids/Tetraedro";
 				break;
 			case '4':
-				addpath = "/Ottaedro";
+				addpath = "/PlatonicSolids/Ottaedro";
 				break;
 			case '5':
-				addpath = "/Icosaedro";
+				addpath = "/PlatonicSolids/Icosaedro";
 				break;
 			default:
 				cerr << "I dati inseriti non sono validi" << endl;
@@ -77,6 +78,10 @@ bool PolyhedralChoice(const string& path, PolyhedralMesh& mesh, const char& p, c
 		}
 		filepath = path + addpath;
 		if(!ImportMesh(filepath, mesh))
+		{
+			return false;
+		}
+		if(!Output(mesh, path))
 		{
 			return false;
 		}
@@ -88,7 +93,7 @@ bool PolyhedralChoice(const string& path, PolyhedralMesh& mesh, const char& p, c
 		*/
 		if(q == '3')
 		{
-			Goldberg(mesh)
+			Goldberg(mesh);
 		}
 		return true;
 	}
@@ -326,7 +331,7 @@ void Goldberg(PolyhedralMesh& mesh)
 			}
 		}
 	}
-/*
+
 	cout << "******* GOLDBERG ********" << endl;
 	for(const auto& i:mesh.Cell2DsCentre)
 	{
@@ -361,13 +366,13 @@ void Goldberg(PolyhedralMesh& mesh)
 		Segments(1,i) = mesh.Cell2DsArches[i][1];
 	}
 	
-	string File_0D_Path = "/home/appuser/Data/ProgettoPCS2025/Progetto/Cell0DsGoldberg.inp";
-	string File_1D_Path = "/home/appuser/Data/ProgettoPCS2025/Progetto/Cell1DsGoldberg.inp";
+	string File_0D_Path = "/home/appuser/Data/ProgettoPCS2025/Progetto/Output/Cell0DsGoldberg.inp";
+	string File_1D_Path = "/home/appuser/Data/ProgettoPCS2025/Progetto/Output/Cell1DsGoldberg.inp";
 	
 	Gedim::UCDUtilities utilities;
 	utilities.ExportPoints(File_0D_Path, Points, {}, {});
 	utilities.ExportSegments(File_1D_Path, Points, Segments, {}, {}, {});
-*/
+
 }
 
 /*
@@ -407,4 +412,58 @@ bool ExpSegments(PolyhedralMesh& mesh, const string& FilePath)
 	return true;
 }
 */
+
+bool Output(PolyhedralMesh& mesh, const string& path)
+{
+	cout << "Si Output\n";
+	
+	if(!OutputCell0Ds(mesh, path))
+    {
+        cerr << "File Cell0Ds.txt not found" << endl;
+        return false;
+    }
+
+/*    if(!OutputCell1Ds(mesh, path))
+    {
+        cerr << "File Cell1Ds.txt not found" << endl;
+        return false;
+    }
+
+    if(!OutputCell2Ds(mesh, path))
+    {
+        cerr << "File Cell2Ds.txt not found" << endl;
+        return false;
+    }
+	
+	if(!OutputCell3Ds(mesh, path))
+    {
+        cerr << "File Cell3Ds.txt not found" << endl;
+        return false;
+    }*/
+    return true;
+}
+
+bool OutputCell0Ds(PolyhedralMesh& mesh, const string& path)
+{
+	string filePath = path + "/Output/Cell0Ds.txt";
+	ofstream file0(filePath);
+	
+	if(!(file0))
+	{
+		return false;
+	}
+	
+	file0 << "Id\tCoordinates" << endl;
+	for(size_t i = 0; i < mesh.Cell0DsNum; i++)
+	{
+		file0 << mesh.Cell0DsID[i] << "\t" << fixed << setprecision(16);
+		for(size_t j = 0; j < 3; j++)
+		{
+			file0 << "[" << mesh.Cell0DsCoordinates[i][j] << "] ";
+		}
+		file0 << endl;
+	}
+	
+	return true;
+}
 }

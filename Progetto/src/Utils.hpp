@@ -25,7 +25,13 @@ void Goldberg(PolyhedralMesh& mesh);
 bool Output(PolyhedralMesh& mesh, const string& path);
 
 bool OutputCell0Ds(PolyhedralMesh& mesh, const string& path);
+
+bool OutputCell1Ds(PolyhedralMesh& mesh, const string& path);
+
+bool OutputCell2Ds(PolyhedralMesh& mesh, const string& path);
 /*
+bool OutputCell3Ds(PolyhedralMesh& mesh, const string& path);
+
 bool ExpPoints(PolyhedralMesh& mesh, const string& FilePath);
 
 bool ExpSegments(PolyhedralMesh& mesh, const string& FilePath);

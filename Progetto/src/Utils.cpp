@@ -100,7 +100,7 @@ bool PolyhedralChoice(const string& path, PolyhedralMesh& mesh, const char& p, c
 	return false;
 }
 // ***************************************************************************
-bool ImportMesh(const string& path, PolyhedralMesh& mesh)
+bool ImportMesh(const string& path, PolyhedralMesh& mesh )
 {
 	cout << "Si IM\n";
 	
@@ -240,12 +240,12 @@ bool ImportCell2Ds(const string& path, PolyhedralMesh& mesh)
 	}
 
 	lines.pop_front();
-	mesh.NumCell2Ds = lines.size();
-	mesh.Cell2DsVertices.reserve(mesh.NumCell2Ds);
-	mesh.Cell2DsEdges.reserve(mesh.NumCell2Ds);
-	mesh.Cell2DsID.reserve(mesh.NumCell2Ds);
-	mesh.Cell2DsCentre.reserve(mesh.NumCell2Ds); // Aggiunto
-	mesh.Cell2DsArches.reserve(mesh.NumCell2Ds); // Aggiunto
+	mesh.Cell2DsNum = lines.size();
+	mesh.Cell2DsVertices.reserve(mesh.Cell2DsNum);
+	mesh.Cell2DsEdges.reserve(mesh.Cell2DsNum);
+	mesh.Cell2DsID.reserve(mesh.Cell2DsNum);
+	mesh.Cell2DsCentre.reserve(mesh.Cell2DsNum);
+	mesh.Cell2DsArches.reserve(mesh.Cell2DsNum);
 
 	char sep;
 	unsigned int Id;
@@ -306,9 +306,9 @@ void Goldberg(PolyhedralMesh& mesh)
 		mesh.Cell2DsCentre.push_back(Centre);
 	}
 	
-	for(unsigned int i = 0; i < mesh.NumCell2Ds; i++)
+	for(unsigned int i = 0; i < mesh.Cell2DsNum; i++)
 	{
-		for(unsigned int j = i+1; j < mesh.NumCell2Ds; j++)
+		for(unsigned int j = i+1; j < mesh.Cell2DsNum; j++)
 		{
 			unsigned int shared = 0;
 			for(int vi = 0; vi < 3; vi++) 
@@ -423,7 +423,7 @@ bool Output(PolyhedralMesh& mesh, const string& path)
         return false;
     }
 
-/*    if(!OutputCell1Ds(mesh, path))
+    if(!OutputCell1Ds(mesh, path))
     {
         cerr << "File Cell1Ds.txt not found" << endl;
         return false;
@@ -434,7 +434,7 @@ bool Output(PolyhedralMesh& mesh, const string& path)
         cerr << "File Cell2Ds.txt not found" << endl;
         return false;
     }
-	
+/*
 	if(!OutputCell3Ds(mesh, path))
     {
         cerr << "File Cell3Ds.txt not found" << endl;
@@ -453,17 +453,94 @@ bool OutputCell0Ds(PolyhedralMesh& mesh, const string& path)
 		return false;
 	}
 	
+	file0 << "Numero di vertici: " << mesh.Cell0DsNum << endl;
 	file0 << "Id\tCoordinates" << endl;
 	for(size_t i = 0; i < mesh.Cell0DsNum; i++)
 	{
 		file0 << mesh.Cell0DsID[i] << "\t" << fixed << setprecision(16);
 		for(size_t j = 0; j < 3; j++)
 		{
-			file0 << "[" << mesh.Cell0DsCoordinates[i][j] << "] ";
+			if(mesh.Cell0DsCoordinates[i][j] < 0.0)
+			{
+				file0 << "[";
+			}
+			else
+			{
+				file0 << "[+";
+			}
+			file0 << mesh.Cell0DsCoordinates[i][j] << "] ";
 		}
 		file0 << endl;
 	}
 	
 	return true;
 }
+
+bool OutputCell1Ds(PolyhedralMesh& mesh, const string& path)
+{
+	string filePath = path + "/Output/Cell1Ds.txt";
+	ofstream file1(filePath);
+	
+	if(!(file1))
+	{
+		return false;
+	}
+	
+	cout.unsetf(ios::fixed);
+	file1 << "Numero di spigoli: " << mesh.Cell1DsNum << endl;
+	file1 << "Id\tVertici" << endl;
+	for(size_t i = 0; i < mesh.Cell1DsNum; i++)
+	{
+		file1 << mesh.Cell1DsID[i] << "\t";
+		for(size_t j = 0; j < 2; j++)
+		{
+			file1 << "[" << mesh.Cell1DsVertices[i][j] << "] ";
+		}
+		file1 << endl;
+	}
+	
+	return true;
+}
+
+bool OutputCell2Ds(PolyhedralMesh& mesh, const string& path)
+{
+	string filePath = path + "/Output/Cell2Ds.txt";
+	ofstream file2(filePath);
+	
+	if(!(file2))
+	{
+		return false;
+	}
+
+	file2 << "Id\tN. Vertici\tId Vertici\tN. Spigoli\tId Spigoli" << endl;
+
+	for(size_t i = 0; i < mesh.Cell2DsNum; i++)
+	{
+		file2 << mesh.Cell1DsID[i] << "\t" << "3\t\t";
+		for(size_t j = 0; j < 3; j++)
+		{
+			file2 << "[" << mesh.Cell2DsVertices[i][j] << "]";
+		}
+		file2 << "\t3\t\t";
+		for(size_t j = 0; j < 3; j++)
+		{
+			file2 << "[" << mesh.Cell2DsEdges[i][j] << "]";
+		}
+		file2 << endl;
+	}
+
+	return true;
+}
+/*
+bool OutputCell3Ds(PolyhedralMesh& mesh, const string& path)
+{
+	string filePath = path + "/Output/Cell3Ds.txt";
+	ofstream file3(filePath);
+	
+	if(!(file3))
+	{
+		return false;
+	}
+}
+*/
 }

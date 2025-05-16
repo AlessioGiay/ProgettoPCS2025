@@ -8,8 +8,8 @@ int main()
 {
 	PolyhedralMesh mesh;
 	string path = "/home/appuser/Data/ProgettoPCS2025/Progetto";
-	string File_0D_Path = "/home/appuser/Data/ProgettoPCS2025/Progetto/Cell0Ds.inp"; // Cambiato percorso
-	string File_1D_Path = "/home/appuser/Data/ProgettoPCS2025/Progetto/Cell1Ds.inp"; // Cambiato percorso
+	string File_0D_Path = "/home/appuser/Data/ProgettoPCS2025/Progetto/Cell0Ds.inp";
+	string File_1D_Path = "/home/appuser/Data/ProgettoPCS2025/Progetto/Cell1Ds.inp";
 
 	if(!ImportVector(path, mesh))
 	{

@@ -8,8 +8,8 @@ int main()
 {
 	PolyhedralMesh mesh;
 	string path = "/home/appuser/Data/ProgettoPCS2025/Progetto/PlatonicSolids";
-	string File_0D_Path = "/home/appuser/Data/Try/MioExport/Cell0DsTRY.inp";
-	string File_1D_Path = "/home/appuser/Data/Try/MioExport/Cell1DsTRY.inp";
+	string File_0D_Path = "/home/appuser/Data/ProgettoPCS2025/Progetto/Cell0Ds.inp"; // Cambiato percorso
+	string File_1D_Path = "/home/appuser/Data/ProgettoPCS2025/Progetto/Cell1Ds.inp"; // Cambiato percorso
 
 	if(!ImportVector(path, mesh))
 	{
@@ -25,8 +25,8 @@ int main()
 	{
 		return 1;
 	}
-
+*/
 	cout << "Fatto tutto\n";
-*/	
+
 	return 0;
 }

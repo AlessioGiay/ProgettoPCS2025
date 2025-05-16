@@ -4,12 +4,12 @@
 #include <cmath>
 
 using namespace std;
-
+/*
 double EdgeLength(const double& x1, const double& y1, const double& z1, const double& x2, const double& y2, const double& z2)
 {
 	return sqrt(pow(x2 - x1 , 2) + pow(y2 - y1 , 2) + pow(z2 - z1 , 2));	
 }
- 
+*/ 
 namespace PolyhedralLibrary
 {
 bool ImportVector(const string& path, PolyhedralMesh& mesh)
@@ -32,12 +32,18 @@ bool ImportVector(const string& path, PolyhedralMesh& mesh)
 	
 	if(Id1 == 'n' && Id2 == 'n')
 	{
-		PolyhedralChoice(path, mesh, p, q, b, c, BestPath);
+		if(!(PolyhedralChoice(path, mesh, p, q, b, c, BestPath)))
+		{
+			return false;
+		}
 	}
 	else if(Id1 != 'n' && Id2 != 'n')
 	{
 		BestPath = true;
-		PolyhedralChoice(path, mesh, p, q, b, c, BestPath);
+		if(!(PolyhedralChoice(path, mesh, p, q, b, c, BestPath)))
+		{
+			return false;
+		}
 	}
 	else
 	{
@@ -66,6 +72,7 @@ bool PolyhedralChoice(const string& path, PolyhedralMesh& mesh, const char& p, c
 				addpath = "/Icosaedro";
 				break;
 			default:
+				cerr << "I dati inseriti non sono validi" << endl;
 				return false;
 		}
 		filepath = path + addpath;
@@ -78,14 +85,11 @@ bool PolyhedralChoice(const string& path, PolyhedralMesh& mesh, const char& p, c
 		{
 			return false;
 		}
+		*/
 		if(q == '3')
 		{
-			if(!(Goldberg(mesh, b, c, BestPath))
-			{
-				return false;
-			}
+			Goldberg(mesh)
 		}
-		*/
 		return true;
 	}
 	return false;
@@ -151,6 +155,15 @@ bool ImportCell0Ds(const string& path, PolyhedralMesh& mesh)
 		mesh.Cell0DsID.push_back(Id);
 		mesh.Cell0DsCoordinates.push_back(Coordinates);
 	}
+	for(const auto& i:mesh.Cell0DsCoordinates)
+	{
+		for(const auto& j:i)
+		{
+			cout << "[" << j << "] ";
+		}
+		cout << endl;
+	}
+	cout << "*************************\n";
 	return true;
 }
 // ***************************************************************************
@@ -190,6 +203,15 @@ bool ImportCell1Ds(const string& path, PolyhedralMesh& mesh)
 		mesh.Cell1DsID.push_back(Id);
 		mesh.Cell1DsVertices.push_back(Vertices);
 	}
+	for(const auto& i:mesh.Cell1DsVertices)
+	{
+		for(const auto& j:i)
+		{
+			cout << "[" << j << "] ";
+		}
+		cout << endl;
+	}
+	cout << "*************************\n";
     return true;
 }
 // ***************************************************************************
@@ -203,24 +225,26 @@ bool ImportCell2Ds(const string& path, PolyhedralMesh& mesh)
     if (!file2)
     {
         return false;
-    }
-    
-    list<string> lines;
-    string line;
-    while(getline(file2,line))
-    {
-        lines.push_back(line);
-    }
+	}
 
-    lines.pop_front();
-    mesh.NumCell2Ds = lines.size();
-    mesh.Cell2DsVertices.reserve(mesh.NumCell2Ds);
-    mesh.Cell2DsEdges.reserve(mesh.NumCell2Ds);
-    mesh.Cell2DsID.reserve(mesh.NumCell2Ds);
-    
-    char sep;
-    unsigned int Id;
-    
+	list<string> lines;
+	string line;
+	while(getline(file2,line))
+	{
+		lines.push_back(line);
+	}
+
+	lines.pop_front();
+	mesh.NumCell2Ds = lines.size();
+	mesh.Cell2DsVertices.reserve(mesh.NumCell2Ds);
+	mesh.Cell2DsEdges.reserve(mesh.NumCell2Ds);
+	mesh.Cell2DsID.reserve(mesh.NumCell2Ds);
+	mesh.Cell2DsCentre.reserve(mesh.NumCell2Ds); // Aggiunto
+	mesh.Cell2DsArches.reserve(mesh.NumCell2Ds); // Aggiunto
+
+	char sep;
+	unsigned int Id;
+
 	for(const auto& l : lines)
 	{
 		stringstream ss(l);
@@ -242,8 +266,110 @@ bool ImportCell2Ds(const string& path, PolyhedralMesh& mesh)
 		mesh.Cell2DsEdges.push_back(Edges);
 		mesh.Cell2DsID.push_back(Id);
 	}
+	for(const auto& i:mesh.Cell2DsVertices)
+	{
+		for(const auto& j:i)
+		{
+			cout << "[" << j << "] ";
+		}
+		cout << endl;
+	}
+	cout << "*************************\n";
+	for(const auto& i:mesh.Cell2DsEdges)
+	{
+		for(const auto& j:i)
+		{
+			cout << "[" << j << "] ";
+		}
+		cout << endl;
+	}
 	return true;
 }
+// ***************************************************************************
+void Goldberg(PolyhedralMesh& mesh)
+{
+	for(const auto& i : mesh.Cell2DsVertices)
+	{
+		Vector3d Centre = Vector3d::Zero();
+		
+		for(const auto& j : i)
+		{
+			Centre[0] += mesh.Cell0DsCoordinates[j][0];
+			Centre[1] += mesh.Cell0DsCoordinates[j][1];
+			Centre[2] += mesh.Cell0DsCoordinates[j][2];
+		}
+		mesh.Cell2DsCentre.push_back(Centre);
+	}
+	
+	for(unsigned int i = 0; i < mesh.NumCell2Ds; i++)
+	{
+		for(unsigned int j = i+1; j < mesh.NumCell2Ds; j++)
+		{
+			unsigned int shared = 0;
+			for(int vi = 0; vi < 3; vi++) 
+			{
+				for(int vj = 0; vj < 3; vj++) 
+				{
+					if (mesh.Cell2DsVertices[i][vi] == mesh.Cell2DsVertices[j][vj]) 
+					{
+						shared++;
+						break;
+					}
+				}
+			}
+			if(shared == 2) 
+			{
+				Vector2i Indices;
+				Indices(0) = i;
+				Indices(1) = j;
+				mesh.Cell2DsArches.push_back(Indices);
+			}
+		}
+	}
+/*
+	cout << "******* GOLDBERG ********" << endl;
+	for(const auto& i:mesh.Cell2DsCentre)
+	{
+		for(const auto& j:i)
+		{
+			cout << "["<< j << "] ";
+		}
+		cout << endl;
+	}
+	for(const auto& i:mesh.Cell2DsArches)
+	{
+		for(const auto& j:i)
+		{
+			cout << "["<< j << "] ";
+		}
+		cout << endl;
+	}
+	
+	MatrixXd Points(3, mesh.Cell2DsCentre.size());
+	MatrixXi Segments(2, mesh.Cell2DsArches.size());
+	
+	for(size_t i = 0; i < mesh.Cell2DsCentre.size(); i++)
+	{
+		Points(0,i) = mesh.Cell2DsCentre[i][0];
+		Points(1,i) = mesh.Cell2DsCentre[i][1];
+		Points(2,i) = mesh.Cell2DsCentre[i][2];
+	}
+	
+	for(size_t i = 0; i < mesh.Cell2DsArches.size(); i++)
+	{
+		Segments(0,i) = mesh.Cell2DsArches[i][0];
+		Segments(1,i) = mesh.Cell2DsArches[i][1];
+	}
+	
+	string File_0D_Path = "/home/appuser/Data/ProgettoPCS2025/Progetto/Cell0DsGoldberg.inp";
+	string File_1D_Path = "/home/appuser/Data/ProgettoPCS2025/Progetto/Cell1DsGoldberg.inp";
+	
+	Gedim::UCDUtilities utilities;
+	utilities.ExportPoints(File_0D_Path, Points, {}, {});
+	utilities.ExportSegments(File_1D_Path, Points, Segments, {}, {}, {});
+*/
+}
+
 /*
 // ***************************************************************************
 bool ExpPoints(PolyhedralMesh& mesh, const string& FilePath)

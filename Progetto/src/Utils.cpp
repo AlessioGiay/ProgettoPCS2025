@@ -670,31 +670,66 @@ void Goldberg(PolyhedralMesh& mesh, const string& path, PolyhedralMesh& gold)
 	{
 		distMin = dist2;
 	}
-	
+
 	for(unsigned int i = 0; i < mesh.Cell2DsNum; i++)
 	{
 		gold.Cell2DsID.push_back(i);
 		gold.Cell2DsNum++;
 		
-		for(const auto& point: mesh.Cell0DsCoordinates)
+		vector<unsigned int> FacePoints = {};
+			
+		for(unsigned int j = 0; j < gold.Cell0DsNum; j++)
 		{
-			vector<unsigned int> FacePoints = {};
-			
-			for(unsigned int j = 0; j < gold.Cell0DsNum; j++)
+			if((mesh.Cell0DsCoordinates[i] - gold.Cell0DsCoordinates[j]).norm() <= distMin * 1.1)
 			{
-				if((point - gold.Cell0DsCoordinates[j]).norm() <= distMin * 1.1)
-				{
-					FacePoints.push_back(j);
-				}
+				FacePoints.push_back(j);
 			}
-			
-			vector<unsigned int> Transposed(1, 3);
-			for(unsigned int k = 0; k < 3; k++)
-			{
-				Transposed[k] = FacePoints[k];
-			}
-			gold.Cell2DsVertices.push_back(Transposed);
 		}
+		if(FacePoints.size() == 3)
+		{
+			gold.Cell2DsVertices.push_back(FacePoints);
+		}
+		else
+		{
+			cerr << "Errore" << endl;
+		}
+	}
+	
+	for(auto& i : gold.Cell2DsVertices)
+	{
+		for(auto& j : i)
+		{
+			cout << j << " ";
+		}
+		cout << endl;
+	}
+	
+	for(unsigned int i = 0; i < gold.Cell2DsVertices.size(); i++)
+	{
+		for(unsigned int j = 0; j < 3; j++)
+		{
+			for(unsigned int k = j + 1; k < 3; j++)
+			{
+				vector<unsigned int> FaceVert = {};
+				for(unsigned int line = 0; line < gold.Cell1DsVertices.size(); line++)
+				{
+					if((gold.Cell1DsVertices[line][0] == j && gold.Cell1DsVertices[line][1] == k)||(gold.Cell1DsVertices[line][0] == k && gold.Cell1DsVertices[line][1] == j))
+					{
+						FaceVert.push_back(line);
+					}
+				}
+				gold.Cell2DsEdges.push_back(FaceVert);
+			}
+		}
+	}
+	
+	for(auto& i : gold.Cell2DsEdges)
+	{
+		for(auto& j : i)
+		{
+			cout << j << " ";
+		}
+		cout << endl;
 	}
 }
 }

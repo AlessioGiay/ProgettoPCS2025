@@ -504,6 +504,10 @@ void Triangulation(const PolyhedralMesh& mesh, PolyhedralData& data, PolyhedralM
 
 	for(size_t count = 0; count < mesh.Cell2DsNum; count++)
 	{
+		A = mesh.Cell0DsCoordinates[mesh.Cell2DsVertices[count][0]];
+		B = mesh.Cell0DsCoordinates[mesh.Cell2DsVertices[count][1]];
+		C = mesh.Cell0DsCoordinates[mesh.Cell2DsVertices[count][2]];
+		
 		for(unsigned int i = 0; i <= data.section; i++)
 		{
 			for(unsigned int j = 0; j <= data.section - i; j++)
@@ -514,10 +518,6 @@ void Triangulation(const PolyhedralMesh& mesh, PolyhedralData& data, PolyhedralM
 				double I = static_cast<double>(i) / data.section;
 				double J = static_cast<double>(j) / data.section;
 				double K = static_cast<double>(k) / data.section;
-
-				A = mesh.Cell0DsCoordinates[mesh.Cell2DsVertices[count][0]];
-				B = mesh.Cell0DsCoordinates[mesh.Cell2DsVertices[count][1]];
-				C = mesh.Cell0DsCoordinates[mesh.Cell2DsVertices[count][2]];
 
 				NewPoint = I*A + J*B + K*C;	
 
@@ -609,11 +609,10 @@ vector<Vector2i> CreateArches(const PolyhedralMesh& mesh, PolyhedralMesh& trg, c
 	return Arches;
 }
 
-}
+
 
 
 // ***************************************************************************
-/*
 void Goldberg(PolyhedralMesh& mesh, const string& path, PolyhedralMesh& gold)
 {
 	cout << "Si Gold\n";
@@ -629,6 +628,8 @@ void Goldberg(PolyhedralMesh& mesh, const string& path, PolyhedralMesh& gold)
 			Centre[2] += mesh.Cell0DsCoordinates[j][2];
 		}
 		gold.Cell0DsCoordinates.push_back(Centre);
+		gold.Cell0DsID.push_back(gold.Cell0DsNum);
+		gold.Cell0DsNum ++;	
 	}
 
 	for(unsigned int i = 0; i < mesh.Cell2DsNum; i++)
@@ -650,34 +651,52 @@ void Goldberg(PolyhedralMesh& mesh, const string& path, PolyhedralMesh& gold)
 			if(shared == 2) 
 			{
 				gold.Cell1DsVertices.push_back(Vector2i(i, j));
+				gold.Cell1DsID.push_back(gold.Cell1DsNum);
+				gold.Cell1DsNum ++;	
 			}
 		}
 	}
 
 	// Bisogna creare le facce legate ai vertici e ai lati
 	// I nuovi vertici hanno la stessa distanza dal centro della nuova faccia, e il centro è esattamente il vertice del solido precedente
-
-	MatrixXd Points(3, mesh.Cell2DsCentre.size());
-	MatrixXi Segments(2, mesh.Cell2DsArches.size());
-
-	for(size_t i = 0; i < mesh.Cell2DsCentre.size(); i++)
+	double distMin = 0;
+	double dist1 = (mesh.Cell0DsCoordinates[0] - gold.Cell0DsCoordinates[0]).norm();
+	double dist2 = (mesh.Cell0DsCoordinates[0] - gold.Cell0DsCoordinates[1]).norm();
+	if(dist1 < dist2)
 	{
-		Points(0,i) = mesh.Cell2DsCentre[i][0];
-		Points(1,i) = mesh.Cell2DsCentre[i][1];
-		Points(2,i) = mesh.Cell2DsCentre[i][2];
+		distMin = dist1;
 	}
-
-	for(size_t i = 0; i < mesh.Cell2DsArches.size(); i++)
+	else
 	{
-		Segments(0,i) = mesh.Cell2DsArches[i][0];
-		Segments(1,i) = mesh.Cell2DsArches[i][1];
+		distMin = dist2;
 	}
-
-	string Paraview0Ds = path + "/Output/GoldbergCell0Ds.inp";
-	string Paraview1Ds = path + "/Output/GoldbergCell1Ds.inp";
-
-	Gedim::UCDUtilities utilities;
-	utilities.ExportPoints(Paraview0Ds, Points, {}, {});
-	utilities.ExportSegments(Paraview1Ds, Points, Segments, {}, {}, {});
+	
+	for(unsigned int i = 0; i < mesh.Cell2DsNum; i++)
+	{
+		gold.Cell2DsID.push_back(i);
+		gold.Cell2DsNum++;
+		
+		for(const auto& point: mesh.Cell0DsCoordinates)
+		{
+			vector<unsigned int> FacePoints = {};
+			
+			for(unsigned int j = 0; j < gold.Cell0DsNum; j++)
+			{
+				if((point - gold.Cell0DsCoordinates[j]).norm() <= distMin * 1.1)
+				{
+					FacePoints.push_back(j);
+				}
+			}
+			
+			vector<unsigned int> Transposed(1, 3);
+			for(unsigned int k = 0; k < 3; k++)
+			{
+				Transposed[k] = FacePoints[k];
+			}
+			gold.Cell2DsVertices.push_back(Transposed);
+		}
+	}
 }
-*/
+}
+
+	

@@ -26,13 +26,13 @@ struct PolyhedralMesh
 
 struct PolyhedralData
 {
-	int p;
-	int q;
-	int b;
-	int c;
-	int Id1;
-	int Id2;
-	unsigned int section;
+	int p = 0;
+	int q = 0;
+	int b = 0;
+	int c = 0;
+	int Id1 = 0;
+	int Id2 = 0;
+	unsigned int section = 0;
 	bool BestPath = false;
 };
 

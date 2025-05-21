@@ -26,7 +26,11 @@ int main()
 		return 1;
 	}
 
-	Triangulation(mesh, data, trg, path);
+//	Triangulation(mesh, data, trg, path);
+	if(data.q == 3)
+	{
+		Goldberg(mesh, path, gold);
+	}
 
 	cout << "Fatto tutto\n";
 

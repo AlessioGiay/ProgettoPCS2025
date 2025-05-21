@@ -31,6 +31,8 @@ bool OutputCell3Ds(PolyhedralMesh& mesh, const string& path);
 
 void Triangulation(const PolyhedralMesh& mesh, PolyhedralData& data, PolyhedralMesh& trg, const string& path);
 
+void Goldberg(PolyhedralMesh& mesh, const string& path, PolyhedralMesh& gold);
+
 vector<Vector3d> TrgCleaning(PolyhedralMesh& trg);
 
 vector<Vector2i> CreateArches(const PolyhedralMesh& mesh, PolyhedralMesh& trg, const PolyhedralData& data);

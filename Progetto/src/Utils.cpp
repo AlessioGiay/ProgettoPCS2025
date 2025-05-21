@@ -708,7 +708,7 @@ void Goldberg(PolyhedralMesh& mesh, const string& path, PolyhedralMesh& gold)
 	{
 		for(unsigned int j = 0; j < 3; j++)
 		{
-			for(unsigned int k = j + 1; k < 3; j++)
+			for(unsigned int k = j + 1; k < 3; k++)
 			{
 				vector<unsigned int> FaceVert = {};
 				for(unsigned int line = 0; line < gold.Cell1DsVertices.size(); line++)

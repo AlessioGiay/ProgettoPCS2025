@@ -919,11 +919,11 @@ bool ShortPath(PolyhedralMesh& trg, PolyhedralData& data)
 	}
 
 	for (unsigned int at = end; at != sentinel; at = prev[at])
-		path.push_back(at));
+		path.push_back(at);
 
 	reverse(path.begin(), path.end());
 
-	cout <<  "******************************" << endl << "Numero lati nel cammino minimo: " << path.size() - 1 << endl;
+	cout <<  "******************************" << endl << "Distanza : " << (path.size() - 1) * (trg.Cell0DsCoordinates[0]-trg.Cell0DsCoordinates[1]).norm() << endl;
 
 	// Inizializza marker a 0
 	trg.Cell0DsMarker = vector<unsigned int>(trg.Cell0DsNum, 0);
@@ -936,7 +936,8 @@ bool ShortPath(PolyhedralMesh& trg, PolyhedralData& data)
 	// Segna i lati del cammino
 	for (size_t i = 0; i < path.size() - 1; ++i)
 	{
-		unsigned int u = path[i], v = path[i + 1];
+		unsigned int u = path[i];
+		unsigned int v = path[i + 1];
 		for (size_t eid = 0; eid < trg.Cell1DsVertices.size(); ++eid)
 		{
 			const auto& edge = trg.Cell1DsVertices[eid];

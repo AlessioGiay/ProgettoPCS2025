@@ -14,7 +14,7 @@ namespace PolyhedralLibrary
 
 bool ImportVector(const string& path, PolyhedralMesh& mesh, PolyhedralData& data)
 {
-	cout << "\nSi IV\n";
+	cout << "\nImportVector\n";
 
 	string answ;
 
@@ -105,7 +105,7 @@ bool ImportVector(const string& path, PolyhedralMesh& mesh, PolyhedralData& data
 // ***************************************************************************
 bool PolyhedralChoice(const string& path, PolyhedralMesh& mesh, PolyhedralData& data)
 {
-	cout << "Si PHC\n";
+	cout << "PolyhedralChoice\n";
 
 	string addpath;
 	string filepath;
@@ -131,7 +131,7 @@ bool PolyhedralChoice(const string& path, PolyhedralMesh& mesh, PolyhedralData& 
 // ***************************************************************************
 bool ImportMesh(const string& path, PolyhedralMesh& mesh )
 {
-	cout << "Si IM\n";
+	cout << " ImportMesh\n";
 
 	if(!ImportCell0Ds(path, mesh))
 	{
@@ -155,7 +155,7 @@ bool ImportMesh(const string& path, PolyhedralMesh& mesh )
 // ***************************************************************************
 bool ImportCell0Ds(const string& path, PolyhedralMesh& mesh)
 {
-	cout << "Si IC0\n";
+	cout << "  ImportCell0Ds\n";
 
 	string filePath = path + "/Cell0Ds.csv";
 	ifstream file0(filePath);
@@ -193,7 +193,7 @@ bool ImportCell0Ds(const string& path, PolyhedralMesh& mesh)
 // ***************************************************************************
 bool ImportCell1Ds(const string& path, PolyhedralMesh& mesh)
 {
-	cout << "Si IC1\n";
+	cout << "  ImportCell1Ds\n";
 
 	string filePath = path + "/Cell1Ds.csv";
 	ifstream file1(filePath);
@@ -232,7 +232,7 @@ bool ImportCell1Ds(const string& path, PolyhedralMesh& mesh)
 // ***************************************************************************
 bool ImportCell2Ds(const string& path, PolyhedralMesh& mesh)
 {
-	cout << "Si IC2\n";
+	cout << "  ImportCell2Ds\n";
 
 	string filePath = path + "/Cell2Ds.csv";
 	ifstream file2(filePath);
@@ -279,12 +279,60 @@ bool ImportCell2Ds(const string& path, PolyhedralMesh& mesh)
 		mesh.Cell2DsEdges.push_back(Edges);
 		mesh.Cell2DsID.push_back(Id);
 	}
+	
+	if (!CheckEdges(mesh)) 
+	{
+		cerr << "Verifica orientamento fallita: controllare le facce.\n";
+		return false;
+	}
+	
 	return true;
+}
+// ***************************************************************************
+bool CheckEdges(const PolyhedralMesh& mesh) 
+{
+	cout << "   CheckEdges\n";
+	
+	bool allGood = true;
+
+	for (size_t fid = 0; fid < mesh.Cell2DsNum; ++fid) 
+	{
+		const vector<unsigned int>& faceVerts = mesh.Cell2DsVertices[fid];
+		const vector<unsigned int>& faceEdges = mesh.Cell2DsEdges[fid];
+		size_t E = faceVerts.size();
+
+		for(size_t i = 0; i < E; ++i) 
+		{
+			unsigned int v0 = faceVerts[i];
+			unsigned int v1 = faceVerts[(i + 1) % E];
+			unsigned int eid = faceEdges[i];
+
+			if(eid >= mesh.Cell1DsVertices.size()) 
+			{
+				cerr << "Errore: edge ID " << eid << " non valido.\n";
+				allGood = false;
+				continue;
+			}
+
+			unsigned int origin = mesh.Cell1DsVertices[eid][0];
+			unsigned int end = mesh.Cell1DsVertices[eid][1];
+
+			bool match = (origin == v0 && end == v1) || (origin == v1 && end == v0);
+
+			if (!match) 
+			{
+				std::cerr << "Errore nella faccia " << fid << " tra i vertici " << v0 << " -> " << v1 << ", ma il lato " << eid << " connette " << origin << " -> " << end << "\n";
+				allGood = false;
+			}
+		}
+	}
+
+	return allGood;
 }
 // ***************************************************************************
 bool Output(PolyhedralMesh& mesh, const string& path)
 {
-	cout << "Si OC\n";
+	cout << "Output\n";
 
 	string folderPath = path + "/Output";
 	try 
@@ -330,7 +378,7 @@ bool Output(PolyhedralMesh& mesh, const string& path)
 // ***************************************************************************
 bool OutputCell0Ds(PolyhedralMesh& mesh, const string& path)
 {
-	cout << "Si OC0\n";
+	cout << " OutputCell0Ds\n";
 
 	string filePath = path + "/Output/Cell0Ds.txt";
 	ofstream file0(filePath);
@@ -359,35 +407,12 @@ bool OutputCell0Ds(PolyhedralMesh& mesh, const string& path)
 		file0 << endl;
 	}
 
-	MatrixXd Points(3, mesh.Cell0DsNum);
-	MatrixXi Segments(2, mesh.Cell1DsNum);
-
-	for(size_t i = 0; i < mesh.Cell0DsNum; i++)
-	{
-		Points(0,i) = mesh.Cell0DsCoordinates[i][0];
-		Points(1,i) = mesh.Cell0DsCoordinates[i][1];
-		Points(2,i) = mesh.Cell0DsCoordinates[i][2];
-	}
-
-	for(size_t i = 0; i < mesh.Cell1DsNum; i++)
-	{
-		Segments(0,i) = mesh.Cell1DsVertices[i][0];
-		Segments(1,i) = mesh.Cell1DsVertices[i][1];
-	}
-
-	string Paraview0Ds = path + "/Output/NormalCell0Ds.inp";
-	string Paraview1Ds = path + "/Output/NormalCell1Ds.inp";
-
-	Gedim::UCDUtilities utilities;
-	utilities.ExportPoints(Paraview0Ds, Points, {}, {});
-	utilities.ExportSegments(Paraview1Ds, Points, Segments, {}, {}, {});
-
 	return true;
 }
 // ***************************************************************************
 bool OutputCell1Ds(PolyhedralMesh& mesh, const string& path)
 {
-	cout << "Si OC1\n";
+	cout << " OutputCell1Ds\n";
 
 	string filePath = path + "/Output/Cell1Ds.txt";
 	ofstream file1(filePath);
@@ -414,7 +439,7 @@ bool OutputCell1Ds(PolyhedralMesh& mesh, const string& path)
 // ***************************************************************************
 bool OutputCell2Ds(PolyhedralMesh& mesh, const string& path)
 {
-	cout << "Si OC2\n";
+	cout << " OutputCell2Ds\n";
 
 	string filePath = path + "/Output/Cell2Ds.txt";
 	ofstream file2(filePath);
@@ -445,7 +470,7 @@ bool OutputCell2Ds(PolyhedralMesh& mesh, const string& path)
 // ***************************************************************************
 bool OutputCell3Ds(PolyhedralMesh& mesh, const string& path)
 {
-	cout << "Si OC3\n";
+	cout << " OutputCell3Ds\n";
 
 	string filePath = path + "/Output/Cell3Ds.txt";
 	ofstream file3(filePath);
@@ -493,12 +518,14 @@ bool OutputCell3Ds(PolyhedralMesh& mesh, const string& path)
 	return true;
 }
 // ***************************************************************************
-void Triangulation(const PolyhedralMesh& mesh, PolyhedralData& data, PolyhedralMesh& trg, const string& path)
+void Triangulation(const PolyhedralMesh& mesh, PolyhedralData& data, PolyhedralMesh& trg, const string& path, const bool Goldby)
 {
-	cout << "Si Trg\n";
+	cout << "Triangulation\n";
 	Vector3d A;
 	Vector3d B;
 	Vector3d C;
+	
+	vector<vector<Vector3d>> Alpha(mesh.Cell2DsNum);
 
 	data.section = data.b + data.c;
 
@@ -522,20 +549,22 @@ void Triangulation(const PolyhedralMesh& mesh, PolyhedralData& data, PolyhedralM
 				NewPoint = I*A + J*B + K*C;	
 
 				trg.Cell0DsCoordinates.push_back(NewPoint);
+				
+				Alpha[count].push_back(NewPoint);
 			}
 		}
 	}
 
 	trg.Cell0DsCoordinates = TrgCleaning(trg);
-	trg.Cell1DsVertices = CreateArches(mesh, trg, data);
+	trg.Cell1DsVertices = CreateArches(mesh, trg, data, Alpha);
 
 	MatrixXd Points(3, trg.Cell0DsNum);
 
 	for(size_t i = 0; i < trg.Cell0DsNum; i++)
 	{
-		Points(0,i) = trg.Cell0DsCoordinates[i][0];
-		Points(1,i) = trg.Cell0DsCoordinates[i][1];
-		Points(2,i) = trg.Cell0DsCoordinates[i][2];
+		Points(0,i) = trg.Cell0DsCoordinates[i][0]/(trg.Cell0DsCoordinates[i]).norm();
+		Points(1,i) = trg.Cell0DsCoordinates[i][1]/(trg.Cell0DsCoordinates[i]).norm();
+		Points(2,i) = trg.Cell0DsCoordinates[i][2]/(trg.Cell0DsCoordinates[i]).norm();
 	}
 
 	MatrixXi Segments(2,trg.Cell1DsNum);
@@ -545,18 +574,45 @@ void Triangulation(const PolyhedralMesh& mesh, PolyhedralData& data, PolyhedralM
 		Segments(0,i) = trg.Cell1DsVertices[i][0];
 		Segments(1,i) = trg.Cell1DsVertices[i][1];
 	}
+	
+	if(data.BestPath)
+	{
+		ShortPath(trg, data);
+	}
+	
+	VectorXi Materials0Ds(trg.Cell0DsMarker.size());
+	for (size_t i = 0; i < trg.Cell0DsMarker.size(); ++i)
+	{
+		Materials0Ds[i] = static_cast<int>(trg.Cell0DsMarker[i]);
+	}
+	VectorXi Materials1Ds(trg.Cell1DsMarker.size());
+	for (size_t i = 0; i < trg.Cell1DsMarker.size(); ++i)
+	{
+		Materials1Ds[i] = static_cast<int>(trg.Cell1DsMarker[i]);
+	}
+	
+	string Paraview0Ds;
+	string Paraview1Ds;
 
-	string Paraview0Ds = path + "/Output/TriangularCell0Ds.inp";
-	string Paraview1Ds = path + "/Output/TriangularCell1Ds.inp";
+	if(!Goldby)
+	{
+		Paraview0Ds = path + "/Output/GeodeticoCell0Ds.inp";
+		Paraview1Ds = path + "/Output/GeodeticoCell1Ds.inp";
+	}
+	else
+	{
+		Paraview0Ds = path + "/Output/GoldbergCell0Ds.inp";
+		Paraview1Ds = path + "/Output/GoldbergCell1Ds.inp";
+	}
 
 	Gedim::UCDUtilities utilities;
-	utilities.ExportPoints(Paraview0Ds, Points, {}, {});
-	utilities.ExportSegments(Paraview1Ds, Points, Segments, {}, {}, {});
+	utilities.ExportPoints(Paraview0Ds, Points, {}, Materials0Ds);
+	utilities.ExportSegments(Paraview1Ds, Points, Segments, {}, {}, Materials1Ds);
 }
 // ***************************************************************************
 vector<Vector3d> TrgCleaning(PolyhedralMesh& trg)
 {
-	cout << "Si TrgClean\n";
+	cout << " TrgCleaning\n";
 	
 	vector<Vector3d> Clean;
 
@@ -583,10 +639,10 @@ vector<Vector3d> TrgCleaning(PolyhedralMesh& trg)
 	return Clean;
 }
 // ***************************************************************************
-vector<Vector2i> CreateArches(const PolyhedralMesh& mesh, PolyhedralMesh& trg, const PolyhedralData& data)
+vector<Vector2i> CreateArches(const PolyhedralMesh& mesh, PolyhedralMesh& trg, const PolyhedralData& data, vector<vector<Vector3d>>& Alpha)
 {
-	cout << "Si CraeteTrg\n";
-	
+	cout << " CreateArches\n";
+
 	vector<Vector2i> Arches;
 	double ComparisonDistance = (mesh.Cell0DsCoordinates[2] - mesh.Cell0DsCoordinates[1]).norm();
 	double expectedLength = ComparisonDistance / data.section;
@@ -598,24 +654,38 @@ vector<Vector2i> CreateArches(const PolyhedralMesh& mesh, PolyhedralMesh& trg, c
 		{
 			double distance = (trg.Cell0DsCoordinates[i] - trg.Cell0DsCoordinates[j]).norm();
 
-			if (abs(distance - expectedLength) <= tolerance)
+			if (abs(distance - expectedLength) > tolerance)
+				continue;
+
+			for(unsigned int riga = 0; riga < Alpha.size(); riga++)
 			{
-				Arches.push_back(Vector2i(i, j));
-				trg.Cell1DsID.push_back(trg.Cell0DsNum);
-				trg.Cell1DsNum ++;
+				bool Point1 = false;
+				bool Point2 = false;
+
+				for(const auto& punto : Alpha[riga])
+				{
+					if((trg.Cell0DsCoordinates[i] - punto).norm() <= tolerance)
+						Point1 = true;
+					if((trg.Cell0DsCoordinates[j] - punto).norm() <= tolerance)
+						Point2 = true;
+				}
+
+				if(Point1 && Point2)
+				{
+					Arches.push_back(Vector2i(i, j));
+					trg.Cell1DsID.push_back(trg.Cell0DsNum);
+					trg.Cell1DsNum++;
+					break;
+				}
 			}
 		}
 	}
 	return Arches;
 }
-
-
-
-
 // ***************************************************************************
-void Goldberg(PolyhedralMesh& mesh, const string& path, PolyhedralMesh& gold)
+bool Goldberg(PolyhedralMesh& mesh, PolyhedralMesh& gold, const string& path)
 {
-	cout << "Si Gold\n";
+	cout << "Goldberg\n";
 
 	for(const auto& i : mesh.Cell2DsVertices)
 	{
@@ -637,9 +707,9 @@ void Goldberg(PolyhedralMesh& mesh, const string& path, PolyhedralMesh& gold)
 		for(unsigned int j = i+1; j < mesh.Cell2DsNum; j++)
 		{
 			unsigned int shared = 0;
-			for(int vi = 0; vi < 3; vi++) 
+			for(unsigned int vi = 0; vi < 3; vi++) 
 			{
-				for(int vj = 0; vj < 3; vj++) 
+				for(unsigned int vj = 0; vj < 3; vj++) 
 				{
 					if (mesh.Cell2DsVertices[i][vi] == mesh.Cell2DsVertices[j][vj]) 
 					{
@@ -656,9 +726,42 @@ void Goldberg(PolyhedralMesh& mesh, const string& path, PolyhedralMesh& gold)
 			}
 		}
 	}
+	
+	MatrixXd Points(3, gold.Cell0DsNum);
+	MatrixXi Segments(2, gold.Cell1DsNum);
 
-	// Bisogna creare le facce legate ai vertici e ai lati
-	// I nuovi vertici hanno la stessa distanza dal centro della nuova faccia, e il centro è esattamente il vertice del solido precedente
+	for(size_t i = 0; i < gold.Cell0DsNum; i++)
+	{
+		Points(0,i) = gold.Cell0DsCoordinates[i][0];
+		Points(1,i) = gold.Cell0DsCoordinates[i][1];
+		Points(2,i) = gold.Cell0DsCoordinates[i][2];
+	}
+
+	for(size_t i = 0; i < gold.Cell1DsNum; i++)
+	{
+		Segments(0,i) = gold.Cell1DsVertices[i][0];
+		Segments(1,i) = gold.Cell1DsVertices[i][1];
+	}
+
+	string Paraview0Ds = path + "/Output/DualeCell0Ds.inp";
+	string Paraview1Ds = path + "/Output/DualeCell1Ds.inp";
+
+	Gedim::UCDUtilities utilities;
+	utilities.ExportPoints(Paraview0Ds, Points, {}, {});
+	utilities.ExportSegments(Paraview1Ds, Points, Segments, {}, {}, {});
+	
+	if(!(CreateFaces(mesh, gold)))
+	{
+		return false;
+	}
+
+	return true;
+}
+// ***************************************************************************
+bool CreateFaces(PolyhedralMesh& mesh, PolyhedralMesh& gold)
+{
+		cout << " CreateFaces\n";
+	
 	double distMin = 0;
 	double dist1 = (mesh.Cell0DsCoordinates[0] - gold.Cell0DsCoordinates[0]).norm();
 	double dist2 = (mesh.Cell0DsCoordinates[0] - gold.Cell0DsCoordinates[1]).norm();
@@ -691,47 +794,185 @@ void Goldberg(PolyhedralMesh& mesh, const string& path, PolyhedralMesh& gold)
 		}
 		else
 		{
-			cerr << "Errore" << endl;
+			cerr << "Errore: la faccia " << i << " ha solo " << FacePoints.size() <<" vertici" << endl;
+			return false;
 		}
 	}
 	
-	for(auto& i : gold.Cell2DsVertices)
+	for (unsigned int i = 0; i < gold.Cell2DsVertices.size(); i++)
 	{
-		for(auto& j : i)
+		vector<unsigned int> FaceEdges;
+
+		for (unsigned int j = 0; j < 3; j++)
 		{
-			cout << j << " ";
-		}
-		cout << endl;
-	}
-	
-	for(unsigned int i = 0; i < gold.Cell2DsVertices.size(); i++)
-	{
-		for(unsigned int j = 0; j < 3; j++)
-		{
-			for(unsigned int k = j + 1; k < 3; k++)
+			for (unsigned int k = j + 1; k < 3; k++)
 			{
-				vector<unsigned int> FaceVert = {};
-				for(unsigned int line = 0; line < gold.Cell1DsVertices.size(); line++)
+				unsigned int v1 = gold.Cell2DsVertices[i][j];
+				unsigned int v2 = gold.Cell2DsVertices[i][k];
+
+				for (unsigned int line = 0; line < gold.Cell1DsVertices.size(); line++)
 				{
-					if((gold.Cell1DsVertices[line][0] == j && gold.Cell1DsVertices[line][1] == k)||(gold.Cell1DsVertices[line][0] == k && gold.Cell1DsVertices[line][1] == j))
+					unsigned int e1 = static_cast<unsigned int>(gold.Cell1DsVertices[line][0]);
+					unsigned int e2 = static_cast<unsigned int>(gold.Cell1DsVertices[line][1]);
+
+					if ((e1 == v1 && e2 == v2) || (e1 == v2 && e2 == v1))
 					{
-						FaceVert.push_back(line);
+						FaceEdges.push_back(line);
+						break;
 					}
 				}
-				gold.Cell2DsEdges.push_back(FaceVert);
+			}
+		}
+
+		if (FaceEdges.size() != 3)
+		{
+			cerr << "Errore: la faccia " << i << " ha solo " << FaceEdges.size() << " lati" << endl;
+			return false;
+		}
+
+		gold.Cell2DsEdges.push_back(FaceEdges);
+	}
+	return true;
+}
+// ***************************************************************************
+void Geodetico(PolyhedralMesh& mesh, const string& path)
+{
+	cout << "Geodetico\n";
+	
+	MatrixXd Points(3, mesh.Cell0DsNum);
+	MatrixXi Segments(2, mesh.Cell1DsNum);
+
+	for(size_t i = 0; i < mesh.Cell0DsNum; i++)
+	{
+		Points(0,i) = mesh.Cell0DsCoordinates[i][0];
+		Points(1,i) = mesh.Cell0DsCoordinates[i][1];
+		Points(2,i) = mesh.Cell0DsCoordinates[i][2];
+	}
+
+	for(size_t i = 0; i < mesh.Cell1DsNum; i++)
+	{
+		Segments(0,i) = mesh.Cell1DsVertices[i][0];
+		Segments(1,i) = mesh.Cell1DsVertices[i][1];
+	}
+
+	string Paraview0Ds = path + "/Output/OriginaleCell0Ds.inp";
+	string Paraview1Ds = path + "/Output/OriginaleCell1Ds.inp";
+
+	Gedim::UCDUtilities utilities;
+	utilities.ExportPoints(Paraview0Ds, Points, {}, {});
+	utilities.ExportSegments(Paraview1Ds, Points, Segments, {}, {}, {});
+}
+// ***************************************************************************
+bool ShortPath(PolyhedralMesh& trg, PolyhedralData& data)
+{
+	cout << " ShortPath\n";
+
+	MatrixXi adj = CreateAdjacencyMatrix(trg);
+
+	if (!(data.Id1 < trg.Cell0DsNum))
+	{
+		cerr << "Errore: l'Id del vertice di inizio percorso non corrisponde a nessun punto" << endl;
+		return false;
+	}
+
+	if (!(data.Id2 < trg.Cell0DsNum))
+	{
+		cerr << "Errore: l'Id del vertice di fine percorso non corrisponde a nessun punto" << endl;
+		return false;
+	}
+
+	unsigned int start = data.Id1;
+	unsigned int end = data.Id2;
+	unsigned int n = adj.rows();
+	
+	unsigned int sentinel = trg.Cell0DsNum + 5; // Numero che so essere al di fuori dagli Id
+
+	vector<unsigned int> prev(n, sentinel);
+	vector<bool> visited(n, false);
+	vector<unsigned int> queue;
+	unsigned int front = 0;
+
+	visited[start] = true;
+	queue.push_back(start);
+
+	while (front < queue.size())
+	{
+		unsigned int u = queue[front++];
+		if (u == end) break;
+
+		for (unsigned int v = 0; v < n; ++v)
+		{
+			if (adj(u, v) && !visited[v])
+			{
+				visited[v] = true;
+				prev[v] = u;
+				queue.push_back(v);
+			}
+		}
+	}
+
+	vector<unsigned int> path;
+	if (prev[end] == sentinel)
+	{
+		cerr << "Nessun cammino trovato tra i due vertici." << endl;
+		return false;
+	}
+
+	for (unsigned int at = end; at != sentinel; at = prev[at])
+		path.push_back(at));
+
+	reverse(path.begin(), path.end());
+
+	cout <<  "******************************" << endl << "Numero lati nel cammino minimo: " << path.size() - 1 << endl;
+
+	// Inizializza marker a 0
+	trg.Cell0DsMarker = vector<unsigned int>(trg.Cell0DsNum, 0);
+	trg.Cell1DsMarker = vector<unsigned int>(trg.Cell1DsNum, 0);
+
+	// Segna i vertici del cammino
+	for (unsigned int vid : path)
+		trg.Cell0DsMarker[vid] = 1;
+
+	// Segna i lati del cammino
+	for (size_t i = 0; i < path.size() - 1; ++i)
+	{
+		unsigned int u = path[i], v = path[i + 1];
+		for (size_t eid = 0; eid < trg.Cell1DsVertices.size(); ++eid)
+		{
+			const auto& edge = trg.Cell1DsVertices[eid];
+			if ((edge[0] == static_cast<int>(u) && edge[1] == static_cast<int>(v)) ||
+				(edge[0] == static_cast<int>(v) && edge[1] == static_cast<int>(u)))
+			{
+				trg.Cell1DsMarker[eid] = 1;
+				break;
 			}
 		}
 	}
 	
-	for(auto& i : gold.Cell2DsEdges)
-	{
-		for(auto& j : i)
-		{
-			cout << j << " ";
-		}
-		cout << endl;
-	}
+	cout << "Percorso minimo trovato: ";
+	for (const auto& i : path)
+		cout << i << " ";
+	cout << endl << "******************************" << endl;
+
+	return true;
 }
+// ***************************************************************************
+MatrixXi CreateAdjacencyMatrix(PolyhedralMesh& trg)
+{
+	cout << "  CreateAdjacencyMatrix\n";
+	
+	MatrixXi Adjacency = MatrixXi::Zero(trg.Cell0DsNum, trg.Cell0DsNum);
+	
+	for(const auto& i:trg.Cell1DsVertices)
+	{
+		unsigned int u = i[0];
+		unsigned int v = i[1];
+		
+		Adjacency(u,v) = 1;
+		Adjacency(v,u) = 1;
+	}
+	
+	return Adjacency;
 }
 
-	
+}

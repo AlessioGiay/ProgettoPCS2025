@@ -49,6 +49,11 @@ list(APPEND ProgettoPCS2025_sources ${src_paraview_sources})
 list(APPEND ProgettoPCS2025_headers ${src_paraview_headers})
 list(APPEND ProgettoPCS2025_includes ${src_paraview_includes})
 
+add_subdirectory(src_test)
+
+list(APPEND ProgettoPCS2025_headers ${src_test_headers})
+list(APPEND ProgettoPCS2025_includes ${src_test_includes})
+
 # Create executable
 ################################################################################
 
@@ -71,3 +76,12 @@ file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/PlatonicSolids/Icosaedro/Cell0Ds.csv
 target_link_libraries(${PROJECT_NAME} ${ProgettoPCS2025_LINKED_LIBRARIES})
 target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE ${${PROJECT_NAME}_includes})
 target_compile_options(${PROJECT_NAME} PUBLIC -fPIC)
+
+add_executable(${PROJECT_NAME}_TEST 
+	main_test.cpp 
+	${${PROJECT_NAME}_sources}
+	${${PROJECT_NAME}_headers})
+
+target_link_libraries(${PROJECT_NAME}_TEST ${ProgettoPCS2025_LINKED_LIBRARIES})
+target_include_directories(${CMAKE_PROJECT_NAME}_TEST PRIVATE ${${PROJECT_NAME}_includes})
+target_compile_options(${PROJECT_NAME}_TEST PUBLIC -fPIC)

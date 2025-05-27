@@ -27,22 +27,25 @@ int main()
 		return 1;
 	}
 
-	Geodetico(mesh, path);
-
-	Triangulation(mesh, data, trg, path, Goldby);
-
-	if(data.q == 3)
+	if(data.b != data.c && (data.b == 0 || data.c == 0) )
 	{
-		Goldby = true;
-		trg = PolyhedralMesh();
+		Geodetico(mesh, path);
+
+		Triangulation(mesh, data, trg, path, Goldby);
+
+		if(data.q == 3)
+		{
+			Goldby = true;
+			trg = PolyhedralMesh();
 		
-		if(!Goldberg(mesh, gold, path))
-		{
-			return 1;
-		}
-		else
-		{
-			Triangulation(gold, data, trg, path, Goldby);
+			if(!Goldberg(mesh, gold, path))
+			{
+				return 1;
+			}
+			else
+			{
+				Triangulation(gold, data, trg, path, Goldby);
+			}
 		}
 	}
 

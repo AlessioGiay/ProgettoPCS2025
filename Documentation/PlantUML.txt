@@ -1,0 +1,76 @@
+@startuml
+title Polyhedral Mesh System
+
+' Parte superiore: PolyhedralLibrary
+package PolyhedralLibrary <<Folder>> 
+{
+
+  class PolyhedralMesh 
+  {
+    +Cell0DsNum : unsigned int
+    +Cell0DsID : vector<unsigned int>
+    +Cell0DsCoordinates : vector<Vector3d>
+    +Cell0DsMarker : vector<unsigned int>
+    +Cell1DsNum : unsigned int
+    +Cell1DsID : vector<unsigned int>
+    +Cell1DsVertices : vector<Vector2i>
+    +Cell1DsMarker : vector<unsigned int>
+    +Cell2DsNum : unsigned int
+    +Cell2DsID : vector<unsigned int>
+    +Cell2DsVertices : vector<vector<unsigned int>>
+    +Cell2DsEdges : vector<vector<unsigned int>>
+  }
+
+  class PolyhedralData 
+  {
+    +p, q, b, c : int
+    +Id1, Id2 : unsigned int
+    +section : unsigned int
+    +BestPath : bool
+  }
+
+  class Utils << (U,#DDFFDD) >> 
+  {
+    +ImportVector(path: string, mesh: PolyhedralMesh, data: PolyhedralData): bool
+    +PolyhedralChoice(path: string, mesh: PolyhedralMesh, data: PolyhedralData): bool
+    +ImportMesh(path: string, mesh: PolyhedralMesh): bool
+    +ImportCell0Ds(path: string, mesh: PolyhedralMesh): bool
+    +ImportCell1Ds(path: string, mesh: PolyhedralMesh): bool
+    +ImportCell2Ds(path: string, mesh: PolyhedralMesh): bool
+    +Output(mesh: PolyhedralMesh, path: string): bool
+    +OutputCell0Ds(mesh: PolyhedralMesh, path: string): bool
+    +OutputCell1Ds(mesh: PolyhedralMesh, path: string): bool
+    +OutputCell2Ds(mesh: PolyhedralMesh, path: string): bool
+    +OutputCell3Ds(mesh: PolyhedralMesh, path: string): bool
+    +Goldberg(mesh: PolyhedralMesh, gold: PolyhedralMesh, path: string): bool
+    +CreateFaces(mesh: PolyhedralMesh, gold: PolyhedralMesh): bool
+    +CheckEdges(mesh: PolyhedralMesh): bool
+    +ShortPath(trg: PolyhedralMesh, data: PolyhedralData): bool
+    +Triangulation(mesh: PolyhedralMesh, data: PolyhedralData, trg: PolyhedralMesh, path: string, Goldby: bool): void
+    +Geodetico(mesh: PolyhedralMesh, path: string): void
+    +CreateAdjacencyMatrix(trg: PolyhedralMesh): MatrixXi
+    +TrgCleaning(trg: PolyhedralMesh): vector<Vector3d>
+    +CreateArches(mesh: PolyhedralMesh, trg: PolyhedralMesh, data: PolyhedralData, Alpha: vector<vector<Vector3d>>): vector<Vector2i>
+  }
+
+}
+
+' Parte inferiore: UCDUtilities
+package UCDUtilities <<Folder>> 
+{
+
+class UCDUtilities 
+  {
+  +ExportPoints(filePath: string, points: MatrixXd, points_properties: vector<UCDProperty<double>> = {}, materials: VectorXi = {}) : void
+  +ExportSegments(filePath: string, points: MatrixXd, segments: MatrixXi, points_properties: vector<UCDProperty<double>> = {}, segmnents_properties: vector<UCDProperty<double>> = {}, materials: VectorXi = {}) : void
+  }
+
+}
+
+' Dipendenza: Utils usa UCDUtilities
+Utils ..down..> UCDUtilities : uses
+
+note "External utility for exporting mesh elements to UCD format" as NoteUCD
+NoteUCD .. UCDUtilities
+
+@enduml

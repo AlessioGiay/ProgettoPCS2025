@@ -1,27 +1,109 @@
-#pragma once
+#include "gtest/gtest.h"
+#include "PolyhedralMesh.hpp"
+#include "Utils.hpp"
 
-#include <iostream>
-#include <vector>
+using namespace PolyhedralLibrary;
+using namespace Eigen;
 
-#include <gtest/gtest.h>
-#include "SortingAlgorithm.hpp"
-
-namespace SortLibrary {
-
-TEST(TestSorting, TestBubbleSort)
+TEST(UtilsTest, TestCreateAdjacencyMatrix) 
 {
-    std::vector<int> v = {9, 13, 5, 10, 2, 7, 9, 4, 6, 12};
-    BubbleSort<int>(v);
-    std::vector<int> sortedV = {2, 4, 5, 6, 7, 9, 9, 10, 12 ,13};
-    EXPECT_EQ(v, sortedV);
+	PolyhedralMesh mesh;
+
+	mesh.Cell0DsNum = 3;
+	mesh.Cell0DsID = {1, 2, 3};
+	mesh.Cell0DsCoordinates = 
+	{
+		Vector3d(0.0, 0.0, 0.0),
+		Vector3d(1.0, 0.0, 0.0),
+		Vector3d(0.0, 1.0, 0.0)
+	};
+	mesh.Cell0DsMarker = {0, 0, 0};
+
+	mesh.Cell1DsNum = 3;
+	mesh.Cell1DsID = {1, 2, 3};
+	mesh.Cell1DsVertices = 
+	{
+		Vector2i(0, 1),
+		Vector2i(1, 2),
+		Vector2i(2, 0)
+	};
+	mesh.Cell1DsMarker = {0, 0, 0};
+
+	mesh.Cell2DsNum = 1;
+	mesh.Cell2DsID = {1};
+	mesh.Cell2DsVertices = {{0, 1, 2}};
+	mesh.Cell2DsEdges = {{0, 1, 2}};
+
+	MatrixXi adj = CreateAdjacencyMatrix(mesh);
+
+	ASSERT_EQ(adj.rows(), 3);
+	ASSERT_EQ(adj.cols(), 3);
+	EXPECT_EQ(adj(0, 1), 1);
+	EXPECT_EQ(adj(1, 2), 1);
+	EXPECT_EQ(adj(2, 0), 1);
+	EXPECT_EQ(adj(0, 2), 1);
+	EXPECT_EQ(adj(1, 0), 1);
+	EXPECT_EQ(adj(2, 1), 1);
 }
 
-TEST(TestSorting, TestHeapSort)
+TEST(UtilsTest, TestImportCell0Ds)
 {
-    std::vector<int> v = {9, 13, 5, 10, 2, 7, 9, 4, 6, 12};
-    HeapSort<int>(v);
-    std::vector<int> sortedV = {2, 4, 5, 6, 7, 9, 9, 10, 12 ,13};
-    EXPECT_EQ(v, sortedV);
+	PolyhedralMesh mesh;
+	string path = "/home/appuser/Data/ProgettoPCS2025/Progetto/Prove";
+	
+	ImportCell0Ds(path, mesh);
+	
+	EXPECT_EQ(mesh.Cell0DsNum, 3);
+	
+	vector<unsigned int> Id = {0,1,2};
+	EXPECT_EQ(mesh.Cell0DsID, Id);
+	
+	vector<Vector3d> Coo = {
+								Vector3d(0.0,0.0,0.0),
+								Vector3d(1.0,0.0,0.0),
+								Vector3d(0.0,1.0,0.0)
+							};
+	for (size_t i = 0; i < Coo.size(); i++)
+	{
+		EXPECT_TRUE(mesh.Cell0DsCoordinates[i].isApprox(Coo[i], 1e-9));
+	}
 }
 
+TEST(UtilsTest, TestImportCell1Ds)
+{
+	PolyhedralMesh mesh;
+	string path = "/home/appuser/Data/ProgettoPCS2025/Progetto/Prove";
+	
+	ImportCell1Ds(path, mesh);
+	
+	EXPECT_EQ(mesh.Cell1DsNum, 3);
+	
+	vector<unsigned int> Id = {0,1,2};
+	EXPECT_EQ(mesh.Cell1DsID, Id);
+	
+	vector<Vector2i> Ver = {
+								Vector2i(0,1),
+								Vector2i(1,2),
+								Vector2i(2,0)
+							};
+	EXPECT_EQ(mesh.Cell1DsVertices, Ver);
+}
+
+TEST(UtilsTest, TestImportCell2Ds)
+{
+	PolyhedralMesh mesh;
+	string path = "/home/appuser/Data/ProgettoPCS2025/Progetto/Prove";
+	
+	ImportCell2Ds(path, mesh);
+	
+	EXPECT_EQ(mesh.Cell2DsNum, 1);
+	
+	vector<unsigned int> Id = {0};
+	EXPECT_EQ(mesh.Cell2DsID, Id);
+	
+	vector<vector<unsigned int>> Ver = {{0,1,2}};
+	EXPECT_EQ(mesh.Cell2DsVertices, Ver);
+	
+	vector<vector<unsigned int>> Edg = {{0,1,2}};
+	EXPECT_EQ(mesh.Cell2DsEdges, Edg);
 }

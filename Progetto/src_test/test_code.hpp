@@ -107,3 +107,47 @@ TEST(UtilsTest, TestImportCell2Ds)
 	vector<vector<unsigned int>> Edg = {{0,1,2}};
 	EXPECT_EQ(mesh.Cell2DsEdges, Edg);
 }
+
+TEST(UtilsTest, TestOutputCell0Ds)
+{	
+	string path = "/home/appuser/Data/ProgettoPCS2025/Progetto/Prove";
+	PolyhedralMesh mesh;
+
+	mesh.Cell0DsNum = 3;
+	mesh.Cell0DsID = {0, 1, 2};
+	mesh.Cell0DsCoordinates = 
+	{
+		Vector3d(0.0, 0.0, 0.0),
+		Vector3d(1.0, 0.0, 0.0),
+		Vector3d(0.0, 1.0, 0.0)
+	};
+	mesh.Cell0DsMarker = {0, 0, 0};
+
+	mesh.Cell1DsNum = 3;
+	mesh.Cell1DsID = {0, 1, 2};
+	mesh.Cell1DsVertices = 
+	{
+		Vector2i(0, 1),
+		Vector2i(1, 2),
+		Vector2i(2, 0)
+	};
+	mesh.Cell1DsMarker = {0, 0, 0};
+
+	mesh.Cell2DsNum = 1;
+	mesh.Cell2DsID = {0};
+	mesh.Cell2DsVertices = {{0, 1, 2}};
+	mesh.Cell2DsEdges = {{0, 1, 2}};
+	
+	OutputCell0Ds(mesh, path);
+	
+	ifstream RealOutput(path + "/Output/Cell0Ds.txt");
+	ifstream ExpetedOutput(path + "/Cell0Ds.txt");
+	
+	string RealLine;
+	string ExpetedLine;
+	
+	while (getline(ExpetedOutput, ExpetedLine) && getline(RealOutput, RealLine))
+	{
+		EXPECT_EQ(ExpetedLine, RealLine);
+	}
+}

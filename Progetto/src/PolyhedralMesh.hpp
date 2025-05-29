@@ -37,6 +37,7 @@ struct PolyhedralData
 	unsigned int Id2 = 0;
 	unsigned int section = 0;
 	bool BestPath = false;
+	bool Goldby = false;
 };
 
 }

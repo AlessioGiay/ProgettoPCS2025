@@ -20,7 +20,9 @@ bool ImportCell1Ds(const string& path, PolyhedralMesh& mesh);
 
 bool ImportCell2Ds(const string& path, PolyhedralMesh& mesh);
 
-bool Output(PolyhedralMesh& mesh, const string& path);
+bool CheckEdges(const PolyhedralMesh& mesh);
+
+bool Output(PolyhedralMesh& mesh, const string& path, PolyhedralData& data);
 
 bool OutputCell0Ds(PolyhedralMesh& mesh, const string& path);
 
@@ -30,22 +32,24 @@ bool OutputCell2Ds(PolyhedralMesh& mesh, const string& path);
 
 bool OutputCell3Ds(PolyhedralMesh& mesh, const string& path);
 
-bool Goldberg(PolyhedralMesh& mesh, PolyhedralMesh& gold,  const string& path);
+void Geodetico(PolyhedralMesh& mesh, const string& path);
+
+bool CreateGoldberg(PolyhedralMesh& mesh, PolyhedralMesh& gold);
+
+void Goldberg(PolyhedralMesh& gold, const string& path);
 
 bool CreateFaces(PolyhedralMesh& mesh, PolyhedralMesh& gold);
 
-bool CheckEdges(const PolyhedralMesh& mesh);
+void CreateTriangulation(const PolyhedralMesh& mesh, PolyhedralData& data, PolyhedralMesh& trg);
 
-bool ShortPath(PolyhedralMesh& trg, PolyhedralData& data);
-
-void Triangulation(const PolyhedralMesh& mesh, PolyhedralData& data, PolyhedralMesh& trg, const string& path,  const bool Goldby);
-
-void Geodetico(PolyhedralMesh& mesh, const string& path);
-
-MatrixXi CreateAdjacencyMatrix(PolyhedralMesh& trg);
+void Triangulation(PolyhedralMesh& trg, const string& path, PolyhedralData& data);
 
 vector<Vector3d> TrgCleaning(PolyhedralMesh& trg);
 
 vector<Vector2i> CreateArches(const PolyhedralMesh& mesh, PolyhedralMesh& trg, const PolyhedralData& data, vector<vector<Vector3d>>& Alpha);
+
+bool ShortPath(PolyhedralMesh& trg, PolyhedralData& data);
+
+MatrixXi CreateAdjacencyMatrix(PolyhedralMesh& trg);
 
 }

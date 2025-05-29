@@ -11,47 +11,51 @@ int main()
 	PolyhedralMesh gold;
 	PolyhedralMesh trg;
 	PolyhedralData data;
-	bool Goldby = false;
 
 	string path = "/home/appuser/Data/ProgettoPCS2025/Progetto";
-	string File_0D_Path = "/home/appuser/Data/ProgettoPCS2025/Progetto/Cell0Ds.inp";
-	string File_1D_Path = "/home/appuser/Data/ProgettoPCS2025/Progetto/Cell1Ds.inp";
 
 	if(!ImportVector(path, mesh, data))
 	{
 		return 1;
 	}
 
-	if(!Output(mesh, path))
-	{
-		return 1;
-	}
-
 	if(data.b != data.c && (data.b == 0 || data.c == 0) )
 	{
+		if(!Output(mesh, path, data))
+		{
+			return 1;
+		}
+		
 		Geodetico(mesh, path);
 
-		Triangulation(mesh, data, trg, path, Goldby);
+		CreateTriangulation(mesh, data, trg);
+		
+		Triangulation(trg, path, data);
 
 		if(data.q == 3)
 		{
-			Goldby = true;
+			data.Goldby = true;
 			trg = PolyhedralMesh();
 		
-			if(!Goldberg(mesh, gold, path))
+			if(!CreateGoldberg(mesh, gold))
 			{
 				return 1;
 			}
 			else
 			{
-				Triangulation(gold, data, trg, path, Goldby);
+				if(!Output(gold, path, data))
+				{
+					return 1;
+				}
+				
+				Goldberg(gold, path);
+				
+				CreateTriangulation(gold, data, trg);
+				
+				Triangulation(trg, path, data);
 			}
 		}
 	}
 
-	cout << "Fatto tutto\n";
-
 	return 0;
 }
-
-// Problema sull'orientamento dei lati

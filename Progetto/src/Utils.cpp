@@ -15,13 +15,13 @@ namespace PolyhedralLibrary
 bool ImportVector(const string& path, PolyhedralMesh& mesh, PolyhedralData& data)
 {
 	cout << "\nInserire i valori nella forma:" << endl;
-	cout << "  p,q,b,c           (senza percorso)\n";
-	cout << "  p,q,b,c,Id1,Id2   (con percorso)\n";
+	cout << "  p,q,b,c           (senza percorso)" << endl;
+	cout << "  p,q,b,c,Id1,Id2   (con percorso)" << endl;
 	cout << "Premere Invio dopo averli scritti tutti su una riga:\n" << endl;
 
 	string answ;
 	cin >> answ;
-	cout << "\n";
+	cout << endl;
 
 	stringstream ss(answ);
 	string elmt;
@@ -34,7 +34,7 @@ bool ImportVector(const string& path, PolyhedralMesh& mesh, PolyhedralData& data
 
 	if (input.size() != 4 && input.size() != 6) 
 	{
-		cerr << "Errore: inserire 4 o 6 valori separati da virgola.\n";
+		cerr << "Errore: inserire 4 o 6 valori separati da virgola" << endl;
 		return false;
 	}
 
@@ -47,7 +47,7 @@ bool ImportVector(const string& path, PolyhedralMesh& mesh, PolyhedralData& data
 
 		if (data.p != 3) 
 		{
-			cerr << "Errore: il valore di p deve essere 3." << endl;
+			cerr << "Errore: il valore di p deve essere 3" << endl;
 			return false;
 		}
 		if (data.q != 3 && data.q != 4 && data.q != 5) 
@@ -112,11 +112,13 @@ bool PolyhedralChoice(const string& path, PolyhedralMesh& mesh, PolyhedralData& 
 		case 5:
 			addpath = "/PlatonicSolids/Icosaedro";
 	}
+
 	filepath = path + addpath;
 	if(!ImportMesh(filepath, mesh))
 	{
 		return false;
 	}
+
 	return true;
 }
 // ***************************************************************************
@@ -139,6 +141,7 @@ bool ImportMesh(const string& path, PolyhedralMesh& mesh )
 		cerr << "File Cell2Ds.csv non trovato" << endl;
 		return false;
 	}
+
 	return true;
 }
 // ***************************************************************************
@@ -175,6 +178,7 @@ bool ImportCell0Ds(const string& path, PolyhedralMesh& mesh)
 		mesh.Cell0DsID.push_back(Id);
 		mesh.Cell0DsCoordinates.push_back(Coordinates);
 	}
+
 	return true;
 }
 // ***************************************************************************
@@ -212,6 +216,7 @@ bool ImportCell1Ds(const string& path, PolyhedralMesh& mesh)
 		mesh.Cell1DsID.push_back(Id);
 		mesh.Cell1DsVertices.push_back(Vertices);
 	}
+
 	return true;
 }
 // ***************************************************************************
@@ -265,10 +270,10 @@ bool ImportCell2Ds(const string& path, PolyhedralMesh& mesh)
 	
 	if (!CheckEdges(mesh)) 
 	{
-		cerr << "Verifica orientamento fallita: controllare le facce.\n";
+		cerr << "Verifica orientamento fallita: controllare le facce" << endl;
 		return false;
 	}
-	
+
 	return true;
 }
 // ***************************************************************************
@@ -290,7 +295,7 @@ bool CheckEdges(const PolyhedralMesh& mesh)
 
 			if(eid >= mesh.Cell1DsVertices.size()) 
 			{
-				cerr << "Errore: edge ID " << eid << " non valido.\n";
+				cerr << "Errore: edge ID " << eid << " non valido" << endl;
 				allGood = false;
 				continue;
 			}
@@ -302,7 +307,7 @@ bool CheckEdges(const PolyhedralMesh& mesh)
 
 			if (!match) 
 			{
-				std::cerr << "Errore nella faccia " << fid << " tra i vertici " << v0 << " -> " << v1 << ", ma il lato " << eid << " connette " << origin << " -> " << end << "\n";
+				std::cerr << "Errore nella faccia " << fid << " tra i vertici " << v0 << " -> " << v1 << ", ma il lato " << eid << " connette " << origin << " -> " << end << endl;
 				allGood = false;
 			}
 		}
@@ -376,6 +381,7 @@ bool Output(PolyhedralMesh& mesh, const string& path, PolyhedralData& data)
 		cerr << "Errore nella creazione del file di output Cell3Ds.txt" << endl;
 		return false;
 	}
+
 	return true;
 }
 // ***************************************************************************
@@ -510,6 +516,7 @@ bool OutputCell3Ds(PolyhedralMesh& mesh, const string& path)
 		}
 		file3 << "\t[" << mesh.Cell2DsID[i] << "]" << endl;
 	}
+
 	return true;
 }
 // ***************************************************************************
@@ -585,7 +592,7 @@ bool CreateGoldberg(PolyhedralMesh& mesh, PolyhedralMesh& gold)
 	{
 		return false;
 	}
-	
+
 	return true;
 }
 // ***************************************************************************
@@ -687,6 +694,7 @@ bool CreateFaces(PolyhedralMesh& mesh, PolyhedralMesh& gold)
 
 		gold.Cell2DsEdges.push_back(FaceEdges);
 	}
+
 	return true;
 }
 // ***************************************************************************
@@ -808,6 +816,7 @@ vector<Vector3d> TrgCleaning(PolyhedralMesh& trg)
 			trg.Cell0DsNum ++;
 		}
 	}
+
 	return Clean;
 }
 // ***************************************************************************
@@ -850,6 +859,7 @@ vector<Vector2i> CreateArches(const PolyhedralMesh& mesh, PolyhedralMesh& trg, c
 			}
 		}
 	}
+
 	return Arches;
 }
 // ***************************************************************************
@@ -873,7 +883,7 @@ bool ShortPath(PolyhedralMesh& trg, PolyhedralData& data)
 	unsigned int end = data.Id2;
 	unsigned int n = adj.rows();
 	
-	unsigned int sentinel = trg.Cell0DsNum + 5; // Numero che so essere al di fuori dagli Id
+	unsigned int sentinel = trg.Cell0DsNum + 5;
 
 	vector<unsigned int> prev(n, sentinel);
 	vector<bool> visited(n, false);
@@ -924,15 +934,12 @@ bool ShortPath(PolyhedralMesh& trg, PolyhedralData& data)
 	
 	cout << "Distanza : " << (path.size() - 1) * (trg.Cell0DsCoordinates[0]-trg.Cell0DsCoordinates[1]).norm() << endl;
 
-	// Inizializza marker a 0
 	trg.Cell0DsMarker = vector<unsigned int>(trg.Cell0DsNum, 0);
 	trg.Cell1DsMarker = vector<unsigned int>(trg.Cell1DsNum, 0);
 
-	// Segna i vertici del cammino
 	for (unsigned int vid : path)
 		trg.Cell0DsMarker[vid] = 1;
 
-	// Segna i lati del cammino
 	for (size_t i = 0; i < path.size() - 1; ++i)
 	{
 		unsigned int u = path[i];

@@ -95,7 +95,8 @@ bool ImportVector(const string& path, PolyhedralMesh& mesh, PolyhedralData& data
 	}
 
 	return true;
-}// ***************************************************************************
+}
+// ***************************************************************************
 bool PolyhedralChoice(const string& path, PolyhedralMesh& mesh, PolyhedralData& data)
 {
 	string addpath;
@@ -281,33 +282,33 @@ bool CheckEdges(const PolyhedralMesh& mesh)
 {	
 	bool allGood = true;
 
-	for (size_t fid = 0; fid < mesh.Cell2DsNum; ++fid) 
+	for (size_t Id = 0; Id < mesh.Cell2DsNum; Id++) 
 	{
-		const vector<unsigned int>& faceVerts = mesh.Cell2DsVertices[fid];
-		const vector<unsigned int>& faceEdges = mesh.Cell2DsEdges[fid];
+		const vector<unsigned int>& faceVerts = mesh.Cell2DsVertices[Id];
+		const vector<unsigned int>& faceEdges = mesh.Cell2DsEdges[Id];
 		size_t E = faceVerts.size();
 
 		for(size_t i = 0; i < E; ++i) 
 		{
 			unsigned int v0 = faceVerts[i];
 			unsigned int v1 = faceVerts[(i + 1) % E];
-			unsigned int eid = faceEdges[i];
+			unsigned int EdgeId = faceEdges[i];
 
-			if(eid >= mesh.Cell1DsVertices.size()) 
+			if(EdgeId >= mesh.Cell1DsVertices.size()) 
 			{
-				cerr << "Errore: edge ID " << eid << " non valido" << endl;
+				cerr << "Errore: edge ID " << EdgeId << " non valido" << endl;
 				allGood = false;
 				continue;
 			}
 
-			unsigned int origin = mesh.Cell1DsVertices[eid][0];
-			unsigned int end = mesh.Cell1DsVertices[eid][1];
+			unsigned int origin = mesh.Cell1DsVertices[EdgeId][0];
+			unsigned int end = mesh.Cell1DsVertices[EdgeId][1];
 
 			bool match = (origin == v0 && end == v1) || (origin == v1 && end == v0);
 
 			if (!match) 
 			{
-				std::cerr << "Errore nella faccia " << fid << " tra i vertici " << v0 << " -> " << v1 << ", ma il lato " << eid << " connette " << origin << " -> " << end << endl;
+				std::cerr << "Errore nella faccia " << Id << " tra i vertici " << v0 << " -> " << v1 << ", ma il lato " << EdgeId << " connette " << origin << " -> " << end << endl;
 				allGood = false;
 			}
 		}
@@ -944,13 +945,13 @@ bool ShortPath(PolyhedralMesh& trg, PolyhedralData& data)
 	{
 		unsigned int u = path[i];
 		unsigned int v = path[i + 1];
-		for (size_t eid = 0; eid < trg.Cell1DsVertices.size(); ++eid)
+		for (size_t id = 0; id < trg.Cell1DsVertices.size(); id++)
 		{
-			const auto& edge = trg.Cell1DsVertices[eid];
+			const auto& edge = trg.Cell1DsVertices[id];
 			if ((edge[0] == static_cast<int>(u) && edge[1] == static_cast<int>(v)) ||
 				(edge[0] == static_cast<int>(v) && edge[1] == static_cast<int>(u)))
 			{
-				trg.Cell1DsMarker[eid] = 1;
+				trg.Cell1DsMarker[id] = 1;
 				break;
 			}
 		}

@@ -1,0 +1,38 @@
+@startuml
+
+allowmixing
+
+package "Strutture dati" {
+  class "Mesh" as PolyhedralMesh {
+  + Cell0DsNum: unsigned int
+  + Cell0DsCoordinates: vector<Vector3d>
+  + Cell0DsID: vector<unsigned int>
+  + Cell1DsNum: unsigned int
+  + Cell1DsVertices: vector<Vector2i>
+  + Cell1DsID: vector<unsigned int>
+  + Cell2DsNum: unsigned int
+  + Cell2DsVertices: vector<vector<unsigned int>>
+  + Cell2DsEdges: vector<vector<unsigned int>>
+  + Cell2DsID: vector<unsigned int>
+  }
+}
+class Geodetico{
+  + Geodetico(PolyhedralMesh& mesh, const string& path): void
+}
+
+class UCDUtilities{
+  + ExportPoints(const std::string& filePath, const Eigen::MatrixXd& points, const std::vector<UCDProperty<double>>& points_properties = {}, const Eigen::VectorXi& materials = {}): void
+
+  + ExportSegments(const std::string& filePath, const Eigen::MatrixXd& points, const Eigen::MatrixXi& segments, const std::vector<UCDProperty<double>>& points_properties = {}, const std::vector<UCDProperty<double>>& segmnents_properties = {}, const Eigen::VectorXi& materials = {}): void
+}
+
+artifact "OriginaleCell0Ds.inp"
+artifact "OriginaleCell1Ds.inp"
+
+UCDUtilities --> "OriginaleCell0Ds.inp" : scrive
+UCDUtilities --> "OriginaleCell1Ds.inp" : scrive
+
+Geodetico --> PolyhedralMesh: legge
+Geodetico --> UCDUtilities: chiama
+
+@enduml

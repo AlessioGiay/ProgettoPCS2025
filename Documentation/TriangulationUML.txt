@@ -1,0 +1,111 @@
+@startuml
+
+allowmixing
+
+top to bottom direction
+
+package "Strutture dati" {
+  class "Mesh" as PolyhedralMesh {
+  + Cell0DsNum: unsigned int
+  + Cell0DsCoordinates: vector<Vector3d>
+  + Cell0DsID: vector<unsigned int>
+  + Cell1DsNum: unsigned int
+  + Cell1DsVertices: vector<Vector2i>
+  + Cell1DsID: vector<unsigned int>
+  + Cell2DsNum: unsigned int
+  + Cell2DsVertices: vector<vector<unsigned int>>
+  + Cell2DsEdges: vector<vector<unsigned int>>
+  + Cell2DsID: vector<unsigned int>
+  }
+
+  class "Gold" as PolyhedralMesh2 {
+  + Cell0DsNum: unsigned int
+  + Cell0DsCoordinates: vector<Vector3d>
+  + Cell0DsID: vector<unsigned int>
+  + Cell1DsNum: unsigned int
+  + Cell1DsVertices: vector<Vector2i>
+  + Cell1DsID: vector<unsigned int>
+  + Cell2DsNum: unsigned int
+  + Cell2DsVertices: vector<vector<unsigned int>>
+  + Cell2DsEdges: vector<vector<unsigned int>>
+  + Cell2DsID: vector<unsigned int>
+  }
+
+  class "Trg" as PolyhedralMesh3 {
+  + Cell0DsNum: unsigned int
+  + Cell0DsCoordinates: vector<Vector3d>
+  + Cell0DsID: vector<unsigned int>
+  + Cell0DsMarker: vector<unsigned int>;
+  + Cell1DsNum: unsigned int
+  + Cell1DsVertices: vector<Vector2i>
+  + Cell1DsID: vector<unsigned int>
+  + Cell1DsMarker: vector<unsigned int>
+  + Cell2DsNum: unsigned int
+  + Cell2DsVertices: vector<vector<unsigned int>>
+  + Cell2DsEdges: vector<vector<unsigned int>>
+  + Cell2DsID: vector<unsigned int>
+}
+
+  class "Data" as PolyhedralData{
+  + b: int
+  + c: int
+  + section: unsigned int
+  + Id1: unsigned int
+  + Id2: unsigned int
+}
+}
+
+class CreateTriangulation{
+  + CreateTriangulation(const PolyhedralMesh& mesh, PolyhedralData& data, PolyhedralMesh& trg)
+}
+
+class Triangulation{
+  + Triangulation(PolyhedralMesh& trg, const string& path, PolyhedralData& data): void
+}
+
+class ShortPath {
+  + ShortPath(PolyhedralMesh& trg, PolyhedralData& data): bool
+}
+
+class CreateAdjacencyMatrix {
+  + CreateAdjacencyMatrix(PolyhedralMesh& trg): MatrixXi
+}
+
+class TrgCleaning{
+  + TrgCleaning(PolyhedralMesh& trg): vector<Vector3d>
+}
+
+class CreateArches{
+  + CreateArches(const PolyhedralMesh& mesh, PolyhedralMesh& trg, const PolyhedralData& data, vector<vector<Vector3d>>& Alpha): vector<Vector2i>
+}
+
+class UCDUtilities{
+  + ExportPoints(const std::string& filePath, const Eigen::MatrixXd& points, const std::vector<UCDProperty<double>>& points_properties = {}, const Eigen::VectorXi& materials = {}): void
+
+  + ExportSegments(const std::string& filePath, const Eigen::MatrixXd& points, const Eigen::MatrixXi& segments, const std::vector<UCDProperty<double>>& points_properties = {}, const std::vector<UCDProperty<double>>& segmnents_properties = {}, const Eigen::VectorXi& materials = {}): void
+}
+
+artifact "GeodeticoCell0Ds.inp"
+artifact "GeodeticoCell1Ds.inp"
+artifact "GoldbergCell0Ds.inp"
+artifact "GoldbergCell1Ds.inp"
+
+UCDUtilities ..> "GeodeticoCell0Ds.inp" : scrive
+UCDUtilities ..> "GeodeticoCell1Ds.inp" : scrive
+UCDUtilities ..> "GoldbergCell0Ds.inp" : scrive
+UCDUtilities ..> "GoldbergCell1Ds.inp" : scrive
+
+CreateTriangulation ..> PolyhedralMesh: legge
+CreateTriangulation ..> PolyhedralMesh2: legge
+CreateTriangulation --> PolyhedralData: legge e modifica
+CreateTriangulation --> PolyhedralMesh3: modifica
+CreateTriangulation --> TrgCleaning: chiama
+CreateTriangulation --> CreateArches: chiama
+TrgCleaning --> PolyhedralMesh3: modifica
+CreateArches --> PolyhedralMesh3: modifica
+PolyhedralMesh3 <-- Triangulation: legge
+Triangulation ..> ShortPath: chiama
+ShortPath --> CreateAdjacencyMatrix: chiama
+Triangulation --> UCDUtilities: chiama
+
+@enduml

@@ -1,0 +1,66 @@
+@startuml
+
+allowmixing
+
+top to bottom direction
+
+package "Strutture dati" {
+  class "Mesh" as PolyhedralMesh {
+  + Cell0DsNum: unsigned int
+  + Cell0DsCoordinates: vector<Vector3d>
+  + Cell0DsID: vector<unsigned int>
+  + Cell1DsNum: unsigned int
+  + Cell1DsVertices: vector<Vector2i>
+  + Cell1DsID: vector<unsigned int>
+  + Cell2DsNum: unsigned int
+  + Cell2DsVertices: vector<vector<unsigned int>>
+  + Cell2DsEdges: vector<vector<unsigned int>>
+  + Cell2DsID: vector<unsigned int>
+  }
+
+  class "Gold" as PolyhedralMesh2 {
+  + Cell0DsNum: unsigned int
+  + Cell0DsCoordinates: vector<Vector3d>
+  + Cell0DsID: vector<unsigned int>
+  + Cell1DsNum: unsigned int
+  + Cell1DsVertices: vector<Vector2i>
+  + Cell1DsID: vector<unsigned int>
+  + Cell2DsNum: unsigned int
+  + Cell2DsVertices: vector<vector<unsigned int>>
+  + Cell2DsEdges: vector<vector<unsigned int>>
+  + Cell2DsID: vector<unsigned int>
+  }
+}
+
+class CreateGoldberg{
+  + CreateGoldberg(PolyhedralMesh& mesh, PolyhedralMesh& gold): bool
+}
+
+class CreateFaces{
+  + CreateFaces(PolyhedralMesh& mesh, PolyhedralMesh& gold): bool
+}
+
+class Goldberg{
+  + Goldberg(PolyhedralMesh& gold, const string& path): void
+}
+
+class UCDUtilities{
+  + ExportPoints(const std::string& filePath, const Eigen::MatrixXd& points, const std::vector<UCDProperty<double>>& points_properties = {}, const Eigen::VectorXi& materials = {}): void
+
+  + ExportSegments(const std::string& filePath, const Eigen::MatrixXd& points, const Eigen::MatrixXi& segments, const std::vector<UCDProperty<double>>& points_properties = {}, const std::vector<UCDProperty<double>>& segmnents_properties = {}, const Eigen::VectorXi& materials = {}): void
+}
+
+artifact "DualeCell0Ds.inp"
+artifact "DualeCell1Ds.inp"
+
+UCDUtilities --> "DualeCell0Ds.inp" : scrive
+UCDUtilities --> "DualeCell1Ds.inp" : scrive
+
+CreateGoldberg --> PolyhedralMesh: legge
+CreateGoldberg --> PolyhedralMesh2: modifica
+CreateGoldberg --> CreateFaces: chiama
+CreateFaces --> PolyhedralMesh2: modifica
+PolyhedralMesh2 <-- Goldberg: legge
+Goldberg --> UCDUtilities: chiama
+
+@enduml

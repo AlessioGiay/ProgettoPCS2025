@@ -1,0 +1,87 @@
+@startuml
+
+allowmixing
+
+package "Strutture dati" {
+class "Mesh" as PolyhedralMesh{
+  + Cell0DsNum: unsigned int
+  + Cell0DsCoordinates: vector<Vector3d>
+  + Cell0DsID: vector<unsigned int>
+  + Cell1DsNum: unsigned int
+  + Cell1DsVertices: vector<Vector2i>
+  + Cell1DsID: vector<unsigned int>
+  + Cell2DsNum: unsigned int
+  + Cell2DsVertices: vector<vector<unsigned int>>
+  + Cell2DsEdges: vector<vector<unsigned int>>
+  + Cell2DsID: vector<unsigned int>
+}
+
+class "Gold" as PolyhedralMesh2{
+  + Cell0DsNum: unsigned int
+  + Cell0DsCoordinates: vector<Vector3d>
+  + Cell0DsID: vector<unsigned int>
+  + Cell1DsNum: unsigned int
+  + Cell1DsVertices: vector<Vector2i>
+  + Cell1DsID: vector<unsigned int>
+  + Cell2DsNum: unsigned int
+  + Cell2DsVertices: vector<vector<unsigned int>>
+  + Cell2DsEdges: vector<vector<unsigned int>>
+  + Cell2DsID: vector<unsigned int>
+}
+}
+
+class "Data" as PolyhedralData {
+  + Goldby: bool
+}
+
+class Output {
+  + Output(string path, PolyhedralMesh& mesh, PolyhedralData& data): bool
+}
+
+class OutputCell0Ds {
+  + OutputCell0Ds(string path, PolyhedralMesh& mesh): bool
+}
+
+class OutputCell1Ds {
+  + OutputCell1Ds(string path, PolyhedralMesh& mesh): bool
+}
+
+class OutputCell2Ds {
+  + OutputCell2Ds(string path, PolyhedralMesh& mesh): bool
+}
+
+class OutputCell3Ds {
+  + OutputCell3Ds(string path, PolyhedralMesh& mesh): bool
+}
+
+artifact "Cell0Ds.txt"
+artifact "Cell1Ds.txt"
+artifact "Cell2Ds.txt"
+artifact "Cell3Ds.txt"
+
+OutputCell0Ds --> "Cell0Ds.txt" : scrive
+OutputCell1Ds --> "Cell1Ds.txt" : scrive
+OutputCell2Ds --> "Cell2Ds.txt" : scrive
+OutputCell3Ds --> "Cell3Ds.txt" : scrive
+
+Output --> PolyhedralData : legge
+Output --> OutputCell0Ds : chiama
+Output --> OutputCell1Ds : chiama
+Output --> OutputCell2Ds : chiama
+Output --> OutputCell3Ds : chiama
+
+note right of Output
+  Goldby decide la cartella in cui scrivere i file
+end note
+
+"Cell0Ds.txt" -[#white]-> PolyhedralMesh
+"Cell1Ds.txt" -[#white]-> PolyhedralMesh2
+
+note as Note1
+OutputCell*Ds utilizza la mesh selezionata in main.cpp
+end note
+
+PolyhedralMesh2 --> Note1
+PolyhedralMesh --> Note1
+
+@enduml

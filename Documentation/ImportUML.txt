@@ -1,0 +1,70 @@
+@startuml
+
+package "Strutture dati" {
+  class "Mesh" as PolyhedralMesh {
+    + Cell0DsNum: unsigned int
+    + Cell0DsCoordinates: vector<Vector3d>
+    + Cell0DsID: vector<unsigned int>
+    + Cell1DsNum: unsigned int
+    + Cell1DsVertices: vector<Vector2i>
+    + Cell1DsID: vector<unsigned int>
+    + Cell2DsNum: unsigned int
+    + Cell2DsVertices: vector<vector<unsigned int>>
+    + Cell2DsEdges: vector<vector<unsigned int>>
+    + Cell2DsID: vector<unsigned int>
+  }
+
+  class "Data" as PolyhedralData {
+    + p: int
+    + q: int
+    + b: int
+    + c: int
+    + Id1: unsigned int
+    + Id2: unsigned int
+    + BestPath: bool
+  }
+}
+
+class ImportVector {
+  + ImportVector(string path, PolyhedralMesh& mesh, PolyhedralData& data): bool
+}
+
+class PolyhedralChoice {
+  + PolyhedralChoice(string path, PolyhedralMesh& mesh, PolyhedralData& data): bool
+}
+
+class ImportMesh {
+  + ImportMesh(string path, PolyhedralMesh& mesh): bool
+}
+
+class ImportCell0Ds {
+  + ImportCell0Ds(string path, PolyhedralMesh& mesh): bool
+}
+
+class ImportCell1Ds {
+  + ImportCell1Ds(string path, PolyhedralMesh& mesh): bool
+}
+
+class ImportCell2Ds {
+  + ImportCell2Ds(string path, PolyhedralMesh& mesh): bool
+}
+
+class CheckEdges {
+  + CheckEdges(const PolyhedralMesh& mesh): bool
+}
+
+ImportVector --> PolyhedralChoice : chiama
+ImportVector --> PolyhedralData : modifica
+
+PolyhedralChoice --> ImportMesh : chiama
+ImportMesh --> ImportCell0Ds : chiama
+ImportMesh --> ImportCell1Ds : chiama
+ImportMesh --> ImportCell2Ds : chiama
+ImportCell2Ds --> CheckEdges : chiama
+
+ImportCell0Ds --> PolyhedralMesh : modifica
+ImportCell1Ds --> PolyhedralMesh : modifica
+ImportCell2Ds --> PolyhedralMesh : modifica
+CheckEdges --> PolyhedralMesh : valuta
+
+@enduml

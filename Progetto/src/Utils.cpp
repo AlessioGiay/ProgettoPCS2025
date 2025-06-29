@@ -63,13 +63,13 @@ bool ImportVector(const string& path, PolyhedralMesh& mesh, PolyhedralData& data
 
 		if (input.size() == 6) 
 		{
-			const string& id1_str = input[4];
-			const string& id2_str = input[5];
+			const int id1_int = stoi(input[4]);
+			const int id2_int = stoi(input[5]);
 
-			if (all_of(id1_str.begin(), id1_str.end(), ::isdigit) && all_of(id2_str.begin(), id2_str.end(), ::isdigit)) 
+			if (id1_int >= 0 && id2_int >= 0) 
 			{
-				data.Id1 = static_cast<unsigned int>(stoul(id1_str));
-				data.Id2 = static_cast<unsigned int>(stoul(id2_str));
+				data.Id1 = static_cast<unsigned int>(id1_int);
+				data.Id2 = static_cast<unsigned int>(id2_int);
 				data.BestPath = true;
 			}
 			else 
